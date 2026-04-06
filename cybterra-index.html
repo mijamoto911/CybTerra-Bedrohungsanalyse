@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CybTerra · Bedrohungsanalyse & Risikorechner</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- CybTerra Stile -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="ct-wrapper">
+
+  <!-- ════════════════════════════════════════
+       SEKTION 1 — BEDROHUNGSANALYSE
+  ════════════════════════════════════════ -->
+
+  <div class="tw-header">
+    <div class="tw-logo">Cyb<span>Terra</span> · Bedrohungsanalyse</div>
+    <div class="tw-live"><span class="tw-dot"></span> Live-Daten</div>
+  </div>
+
+  <!-- Statistiken -->
+  <div class="tw-stats">
+    <div class="tw-stat">
+      <div class="tw-stat-n"><em>83</em>%</div>
+      <div class="tw-stat-l">der Unternehmen erlitten mindestens einen Angriff</div>
+      <div class="tw-stat-s">IBM 2024</div>
+    </div>
+    <div class="tw-stat">
+      <div class="tw-stat-n">$<em>4,88</em>M</div>
+      <div class="tw-stat-l">durchschnittliche Kosten eines Vorfalls</div>
+      <div class="tw-stat-s">IBM 2024</div>
+    </div>
+    <div class="tw-stat">
+      <div class="tw-stat-n"><em id="cve-count">...</em></div>
+      <div class="tw-stat-l">aktive Schwachstellen in der CISA-Datenbank</div>
+      <div class="tw-stat-s">cisa.gov · live</div>
+    </div>
+  </div>
+
+  <!-- CISA KEV -->
+  <div class="tw-section">
+    <div class="tw-section-head">
+      <div class="tw-section-title">Neue Schwachstellen · CISA KEV</div>
+      <div class="tw-badge" id="cve-badge">wird geladen...</div>
+    </div>
+    <div class="tw-list" id="cve-list">
+      <div class="tw-loading">CISA-Daten werden geladen...</div>
+    </div>
+  </div>
+
+  <!-- Nachrichten -->
+  <div class="tw-section">
+    <div class="tw-section-head">
+      <div class="tw-section-title">Aktuelle Nachrichten · The Hacker News</div>
+    </div>
+    <div class="tw-tabs">
+      <button class="tw-tab active" onclick="filterNews('all', this)">Alle</button>
+      <button class="tw-tab" onclick="filterNews('breach', this)">Datenlecks</button>
+      <button class="tw-tab" onclick="filterNews('ransomware', this)">Ransomware</button>
+      <button class="tw-tab" onclick="filterNews('vulnerability', this)">Schwachstellen</button>
+    </div>
+    <div class="tw-list" id="news-list">
+      <div class="tw-loading">Nachrichten werden geladen...</div>
+    </div>
+  </div>
+
+  <!-- Footer Sektion 1 -->
+  <div class="tw-footer">
+    <div class="tw-updated" id="updated-time"></div>
+    <a class="tw-cta-btn" href="https://cybterra.com" target="_blank">Eigenen Schutz prüfen →</a>
+  </div>
+
+  <!-- Trennlinie -->
+  <div class="ct-divider"></div>
+
+  <!-- ════════════════════════════════════════
+       SEKTION 2 — RISIKORECHNER
+  ════════════════════════════════════════ -->
+
+  <div class="rc-head">
+    <div class="rc-logo">Cyb<span>Terra</span> · Risikorechner</div>
+    <div class="rc-sub">Geben Sie Ihre Unternehmensdaten ein – und erhalten Sie eine Schätzung der potenziellen Verluste ohne Cyberschutz.</div>
+  </div>
+
+  <!-- Schritt 1: Unternehmen -->
+  <div class="rc-step">
+    <div class="rc-step-title">Über das Unternehmen</div>
+    <div class="rc-grid2">
+      <div class="rc-field">
+        <label>Unternehmensname</label>
+        <input type="text" id="company" placeholder="z. B. Muster GmbH" />
+      </div>
+      <div class="rc-field">
+        <label>Branche</label>
+        <select id="industry">
+          <option value="fintech">Fintech / Banking</option>
+          <option value="ecommerce">E-Commerce / Handel</option>
+          <option value="healthcare">Medizin / Kliniken</option>
+          <option value="saas">SaaS / IT-Produkt</option>
+          <option value="outsourcing">IT-Outsourcing</option>
+          <option value="manufacturing">Produktion / Industrie</option>
+          <option value="other">Sonstiges</option>
+        </select>
+      </div>
+      <div class="rc-field">
+        <label>Anzahl der Mitarbeiter</label>
+        <select id="employees">
+          <option value="10">1–10</option>
+          <option value="50" selected>11–50</option>
+          <option value="150">51–200</option>
+          <option value="500">201–500</option>
+          <option value="1000">500+</option>
+        </select>
+      </div>
+      <div class="rc-field">
+        <label>Jahresumsatz (Tsd. $)</label>
+        <input type="number" id="revenue" placeholder="500" min="10" value="500" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Schritt 2: Daten -->
+  <div class="rc-step">
+    <div class="rc-step-title">Welche Daten speichert das Unternehmen</div>
+    <div class="rc-checks" id="data-checks">
+      <div class="rc-check on" data-val="customer">
+        <div class="rc-check-box"></div><span class="rc-check-label">Kundendaten</span>
+      </div>
+      <div class="rc-check" data-val="payment">
+        <div class="rc-check-box"></div><span class="rc-check-label">Zahlungsdaten / Karten</span>
+      </div>
+      <div class="rc-check" data-val="health">
+        <div class="rc-check-box"></div><span class="rc-check-label">Medizinische Unterlagen</span>
+      </div>
+      <div class="rc-check on" data-val="ip">
+        <div class="rc-check-box"></div><span class="rc-check-label">Geistiges Eigentum</span>
+      </div>
+      <div class="rc-check" data-val="employee">
+        <div class="rc-check-box"></div><span class="rc-check-label">Mitarbeiterdaten</span>
+      </div>
+      <div class="rc-check" data-val="financial">
+        <div class="rc-check-box"></div><span class="rc-check-label">Finanzberichte</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schritt 3: Sicherheit -->
+  <div class="rc-step">
+    <div class="rc-step-title">Aktueller Sicherheitsstatus</div>
+    <div class="rc-checks" id="security-checks">
+      <div class="rc-check" data-val="antivirus">
+        <div class="rc-check-box"></div><span class="rc-check-label">Antivirensoftware / EDR</span>
+      </div>
+      <div class="rc-check" data-val="firewall">
+        <div class="rc-check-box"></div><span class="rc-check-label">Firewall konfiguriert</span>
+      </div>
+      <div class="rc-check" data-val="backup">
+        <div class="rc-check-box"></div><span class="rc-check-label">Datensicherungen (Backups)</span>
+      </div>
+      <div class="rc-check" data-val="mfa">
+        <div class="rc-check-box"></div><span class="rc-check-label">Zwei-Faktor-Authentifizierung</span>
+      </div>
+      <div class="rc-check" data-val="training">
+        <div class="rc-check-box"></div><span class="rc-check-label">Mitarbeiterschulungen</span>
+      </div>
+      <div class="rc-check" data-val="pentest">
+        <div class="rc-check-box"></div><span class="rc-check-label">Penetrationstest / Audit</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="rc-btn" onclick="calculate()">Risiken berechnen →</button>
+
+  <!-- Ergebnisse (werden per JS befüllt) -->
+  <div id="results" class="rc-results hidden"></div>
+
+</div><!-- /.ct-wrapper -->
+
+<!-- CybTerra JavaScript -->
+<script src="script.js"></script>
+
+</body>
+</html>

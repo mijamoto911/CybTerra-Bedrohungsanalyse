@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CybTerra · Risikorechner</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #fff;
+        font-family: 'DM Sans', sans-serif;
+        color: #111;
+      }
+
+      .rc {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+
+      .rc-head {
+        margin-bottom: 1.5rem;
+      }
+      .rc-logo {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 18px;
+        color: #111;
+        margin-bottom: 4px;
+      }
+      .rc-logo span {
+        color: #1d9e75;
+      }
+      .rc-sub {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+      }
+
+      .rc-step {
+        background: #f7f7f5;
+        border: 0.5px solid #e0e0dc;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+      }
+      .rc-step-title {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #1d9e75;
+        margin-bottom: 1rem;
+      }
+
+      .rc-grid2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      @media (max-width: 480px) {
+        .rc-grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .rc-field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .rc-field label {
+        font-size: 12px;
+        color: #666;
+      }
+      .rc-field input,
+      .rc-field select {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        padding: 8px 10px;
+        border: 0.5px solid #ccc;
+        border-radius: 8px;
+        background: #fff;
+        color: #111;
+        width: 100%;
+        outline: none;
+        appearance: auto;
+      }
+      .rc-field input:focus,
+      .rc-field select:focus {
+        border-color: #1d9e75;
+      }
+
+      .rc-checks {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      @media (max-width: 480px) {
+        .rc-checks {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .rc-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 8px 10px;
+        border: 0.5px solid #e0e0dc;
+        border-radius: 8px;
+        background: #fff;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+        user-select: none;
+      }
+      .rc-check.on {
+        border-color: #1d9e75;
+        background: #f0fbf7;
+      }
+      .rc-check-box {
+        width: 15px;
+        height: 15px;
+        border: 1.5px solid #ccc;
+        border-radius: 3px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rc-check.on .rc-check-box {
+        background: #1d9e75;
+        border-color: #1d9e75;
+      }
+      .rc-check.on .rc-check-box::after {
+        content: '';
+        width: 8px;
+        height: 4px;
+        border-left: 1.5px solid #fff;
+        border-bottom: 1.5px solid #fff;
+        transform: rotate(-45deg) translateY(-1px);
+        display: block;
+      }
+      .rc-check-label {
+        font-size: 13px;
+        color: #111;
+        line-height: 1.3;
+      }
+
+      .rc-btn {
+        width: 100%;
+        padding: 12px;
+        background: #1d9e75;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        transition: background 0.15s;
+      }
+      .rc-btn:hover {
+        background: #0f6e56;
+      }
+
+      /* Results */
+      .rc-results {
+        border: 0.5px solid #e0e0dc;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-top: 1.5rem;
+      }
+      .rc-results-head {
+        background: #1d9e75;
+        padding: 1rem 1.25rem;
+      }
+      .rc-results-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .rc-results-company {
+        font-size: 12px;
+        color: #9fe1cb;
+        margin-top: 2px;
+      }
+      .rc-results-body {
+        padding: 1.25rem;
+      }
+
+      .rc-total {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 1.25rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 0.5px solid #e0e0dc;
+        flex-wrap: wrap;
+      }
+      .rc-total-num {
+        font-family: 'Syne', sans-serif;
+        font-size: 40px;
+        font-weight: 700;
+        color: #e24b4a;
+      }
+      .rc-total-label {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.4;
+      }
+
+      .rc-items {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 1.25rem;
+      }
+      .rc-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .rc-item-label {
+        font-size: 12px;
+        color: #666;
+        min-width: 180px;
+      }
+      .rc-item-bar-wrap {
+        flex: 1;
+        min-width: 60px;
+        height: 6px;
+        background: #f0f0ec;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .rc-item-bar {
+        height: 100%;
+        background: #e24b4a;
+        border-radius: 3px;
+        transition: width 0.6s ease;
+      }
+      .rc-item-val {
+        font-size: 13px;
+        font-weight: 500;
+        color: #111;
+        min-width: 80px;
+        text-align: right;
+        font-family: 'Syne', sans-serif;
+      }
+
+      .rc-risk-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 1.25rem;
+      }
+      @media (max-width: 480px) {
+        .rc-risk-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .rc-risk {
+        border-radius: 8px;
+        padding: 0.75rem;
+        border: 0.5px solid #e0e0dc;
+      }
+      .rc-risk.high {
+        background: #fcebeb;
+        border-color: #f09595;
+      }
+      .rc-risk.med {
+        background: #faeeda;
+        border-color: #fac775;
+      }
+      .rc-risk.low {
+        background: #eaf3de;
+        border-color: #c0dd97;
+      }
+      .rc-risk-label {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+      }
+      .rc-risk.high .rc-risk-label {
+        color: #a32d2d;
+      }
+      .rc-risk.med .rc-risk-label {
+        color: #854f0b;
+      }
+      .rc-risk.low .rc-risk-label {
+        color: #3b6d11;
+      }
+      .rc-risk-val {
+        font-family: 'Syne', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        margin: 4px 0 2px;
+      }
+      .rc-risk.high .rc-risk-val {
+        color: #a32d2d;
+      }
+      .rc-risk.med .rc-risk-val {
+        color: #854f0b;
+      }
+      .rc-risk.low .rc-risk-val {
+        color: #3b6d11;
+      }
+      .rc-risk-desc {
+        font-size: 11px;
+      }
+      .rc-risk.high .rc-risk-desc {
+        color: #791f1f;
+      }
+      .rc-risk.med .rc-risk-desc {
+        color: #633806;
+      }
+      .rc-risk.low .rc-risk-desc {
+        color: #27500a;
+      }
+
+      .rc-recs {
+        border-top: 0.5px solid #e0e0dc;
+        padding-top: 1rem;
+      }
+      .rc-recs-title {
+        font-size: 12px;
+        font-weight: 500;
+        color: #666;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .rc-rec {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: #111;
+      }
+      .rc-rec-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #1d9e75;
+        margin-top: 5px;
+        flex-shrink: 0;
+      }
+
+      .rc-cta {
+        margin-top: 1.25rem;
+        background: #f7f7f5;
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        border: 0.5px solid #e0e0dc;
+      }
+      .rc-cta-text {
+        font-size: 13px;
+        color: #111;
+      }
+      .rc-cta-text small {
+        display: block;
+        font-size: 11px;
+        color: #666;
+        margin-top: 2px;
+      }
+      .rc-cta-btn {
+        background: #1d9e75;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 18px;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        white-space: nowrap;
+      }
+      .rc-cta-btn:hover {
+        background: #0f6e56;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rc">
+      <div class="rc-head">
+        <div class="rc-logo">Cyb<span>Terra</span> · Risikorechner</div>
+        <div class="rc-sub">
+          Geben Sie Ihre Unternehmensdaten ein – und erhalten Sie eine Schätzung
+          der potenziellen Verluste ohne Cyberschutz.
+        </div>
+      </div>
+
+      <!-- Schritt 1 -->
+      <div class="rc-step">
+        <div class="rc-step-title">Über das Unternehmen</div>
+        <div class="rc-grid2">
+          <div class="rc-field">
+            <label>Unternehmensname</label>
+            <input type="text" id="company" placeholder="z. B. Muster GmbH" />
+          </div>
+          <div class="rc-field">
+            <label>Branche</label>
+            <select id="industry">
+              <option value="fintech">Fintech / Banking</option>
+              <option value="ecommerce">E-Commerce / Handel</option>
+              <option value="healthcare">Medizin / Kliniken</option>
+              <option value="saas">SaaS / IT-Produkt</option>
+              <option value="outsourcing">IT-Outsourcing</option>
+              <option value="manufacturing">Produktion / Industrie</option>
+              <option value="other">Sonstiges</option>
+            </select>
+          </div>
+          <div class="rc-field">
+            <label>Anzahl der Mitarbeiter</label>
+            <select id="employees">
+              <option value="10">1–10</option>
+              <option value="50" selected>11–50</option>
+              <option value="150">51–200</option>
+              <option value="500">201–500</option>
+              <option value="1000">500+</option>
+            </select>
+          </div>
+          <div class="rc-field">
+            <label>Jahresumsatz (Tsd. $)</label>
+            <input
+              type="number"
+              id="revenue"
+              placeholder="500"
+              min="10"
+              value="500"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Schritt 2 -->
+      <div class="rc-step">
+        <div class="rc-step-title">Welche Daten speichert das Unternehmen</div>
+        <div class="rc-checks" id="data-checks">
+          <div class="rc-check on" data-val="customer">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Kundendaten</span>
+          </div>
+          <div class="rc-check" data-val="payment">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Zahlungsdaten / Karten</span>
+          </div>
+          <div class="rc-check" data-val="health">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Medizinische Unterlagen</span>
+          </div>
+          <div class="rc-check on" data-val="ip">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Geistiges Eigentum</span>
+          </div>
+          <div class="rc-check" data-val="employee">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Mitarbeiterdaten</span>
+          </div>
+          <div class="rc-check" data-val="financial">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Finanzberichte</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schritt 3 -->
+      <div class="rc-step">
+        <div class="rc-step-title">Aktueller Sicherheitsstatus</div>
+        <div class="rc-checks" id="security-checks">
+          <div class="rc-check" data-val="antivirus">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Antivirensoftware / EDR</span>
+          </div>
+          <div class="rc-check" data-val="firewall">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Firewall konfiguriert</span>
+          </div>
+          <div class="rc-check" data-val="backup">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Datensicherungen (Backups)</span>
+          </div>
+          <div class="rc-check" data-val="mfa">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Zwei-Faktor-Authentifizierung</span>
+          </div>
+          <div class="rc-check" data-val="training">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Mitarbeiterschulungen</span>
+          </div>
+          <div class="rc-check" data-val="pentest">
+            <div class="rc-check-box"></div>
+            <span class="rc-check-label">Penetrationstest / Audit</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="rc-btn" onclick="calculate()">Risiken berechnen →</button>
+
+      <div id="results" class="rc-results hidden"></div>
+    </div>
+
+    <script>
+      document.querySelectorAll('.rc-check').forEach((el) => {
+        el.addEventListener('click', () => el.classList.toggle('on'));
+      });
+
+      function fmt(n) {
+        if (n >= 1000000)
+          return (n / 1000000).toFixed(1).replace('.', ',') + ' Mio. €';
+        if (n >= 1000)
+          return Math.round(n / 1000).toLocaleString('de-DE') + ' Tsd. €';
+        return Math.round(n).toLocaleString('de-DE') + ' €';
+      }
+
+      function calculate() {
+        const company =
+          document.getElementById('company').value.trim() || 'Ihr Unternehmen';
+        const industry = document.getElementById('industry').value;
+        const employees = parseInt(document.getElementById('employees').value);
+        const revenue =
+          parseFloat(document.getElementById('revenue').value) * 1000 || 500000;
+
+        const dataChecked = [
+          ...document.querySelectorAll('#data-checks .rc-check.on'),
+        ].map((e) => e.dataset.val);
+        const secChecked = [
+          ...document.querySelectorAll('#security-checks .rc-check.on'),
+        ].map((e) => e.dataset.val);
+        const secScore = secChecked.length;
+
+        const mult =
+          {
+            fintech: 2.1,
+            healthcare: 2.4,
+            ecommerce: 1.7,
+            saas: 1.5,
+            outsourcing: 1.4,
+            manufacturing: 1.3,
+            other: 1.2,
+          }[industry] || 1.2;
+
+        const dataRisk = {
+          customer: 85000,
+          payment: 120000,
+          health: 200000,
+          ip: 95000,
+          employee: 45000,
+          financial: 75000,
+        };
+        const dataLoss = dataChecked.reduce(
+          (s, k) => s + (dataRisk[k] || 0),
+          0,
+        );
+        const secFactor = 1 + Math.max(0, (6 - secScore) * 0.18);
+
+        const base = Math.max(50000, revenue * 0.12);
+        const downtime = employees * 1200 * (secScore < 3 ? 5 : 3);
+        const regulatory = dataChecked.includes('payment')
+          ? 75000
+          : dataChecked.includes('health')
+            ? 120000
+            : 15000;
+        const reputation = revenue * (0.08 + (6 - secScore) * 0.015);
+        const incident = (base + dataLoss) * mult * secFactor;
+        const total = Math.round(incident + downtime + regulatory + reputation);
+
+        const items = [
+          { label: 'Kosten der Schadensbehebung', val: Math.round(incident) },
+          {
+            label: 'Betriebsausfall & Produktivitätsverlust',
+            val: Math.round(downtime),
+          },
+          { label: 'Reputationsschäden', val: Math.round(reputation) },
+          { label: 'Bußgelder / DSGVO-Strafen', val: Math.round(regulatory) },
+        ];
+
+        const breachProb = Math.min(
+          95,
+          40 + (6 - secScore) * 9 + dataChecked.length * 3,
+        );
+        const recoveryDays = secScore < 2 ? 45 : secScore < 4 ? 21 : 10;
+        const yearlyRisk = Math.round(total * (breachProb / 100));
+        const rcClass =
+          recoveryDays > 20 ? 'high' : recoveryDays > 10 ? 'med' : 'low';
+
+        const recs = {
+          fintech: [
+            'PCI-DSS-Compliance implementieren',
+            '24/7-Transaktionsüberwachung einrichten',
+            'Alle Zahlungsdaten verschlüsseln',
+          ],
+          healthcare: [
+            'DSGVO-konforme Datenverschlüsselung',
+            'Zugriffskontrolle für Patientenakten',
+            'Vollständiges Audit-Logging',
+          ],
+          ecommerce: [
+            'Schutz vor Skimming / Magecart',
+            'Web Application Firewall (WAF) einrichten',
+            'API-Monitoring der Zahlungsschnittstellen',
+          ],
+          saas: [
+            'Penetrationstest für API und Web-App',
+            'SIEM zur Anomalieerkennung einführen',
+            'Zero-Trust-Architektur umsetzen',
+          ],
+          outsourcing: [
+            'Kundenumgebungen isolieren',
+            'Privilegierte Konten regelmäßig auditieren',
+            'SOC-Monitoring rund um die Uhr',
+          ],
+          manufacturing: [
+            'OT/SCADA-Systeme absichern',
+            'Netzwerke segmentieren',
+            'Redundanz kritischer Systeme aufbauen',
+          ],
+          other: [
+            'Grundlegenden Security-Audit durchführen',
+            'Team zu Phishing schulen',
+            'MFA überall einführen',
+          ],
+        }[industry] || [
+          'Grundlegenden Security-Audit durchführen',
+          'Team zu Phishing schulen',
+          'MFA überall einführen',
+        ];
+
+        const dateStr = new Date().toLocaleDateString('de-DE', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        });
+
+        document.getElementById('results').innerHTML = `
+      <div class="rc-results-head">
+        <div class="rc-results-title">Risikoanalyse ohne Cyberschutz</div>
+        <div class="rc-results-company">${company} · ${dateStr}</div>
+      </div>
+      <div class="rc-results-body">
+        <div class="rc-total">
+          <div class="rc-total-num">${fmt(total)}</div>
+          <div class="rc-total-label">potenzielle Verluste<br>durch einen einzigen Vorfall</div>
+        </div>
+        <div class="rc-items">
+          ${items
+            .map(
+              (i) => `
+            <div class="rc-item">
+              <div class="rc-item-label">${i.label}</div>
+              <div class="rc-item-bar-wrap"><div class="rc-item-bar" style="width:${Math.round((i.val / total) * 100)}%"></div></div>
+              <div class="rc-item-val">${fmt(i.val)}</div>
+            </div>`,
+            )
+            .join('')}
+        </div>
+        <div class="rc-risk-row">
+          <div class="rc-risk high">
+            <div class="rc-risk-label">Angriffswahrscheinlichkeit</div>
+            <div class="rc-risk-val">${breachProb}%</div>
+            <div class="rc-risk-desc">innerhalb von 12 Monaten</div>
+          </div>
+          <div class="rc-risk med">
+            <div class="rc-risk-label">Erwarteter Schaden</div>
+            <div class="rc-risk-val">${fmt(yearlyRisk)}</div>
+            <div class="rc-risk-desc">hochgerechnet auf ein Jahr</div>
+          </div>
+          <div class="rc-risk ${rcClass}">
+            <div class="rc-risk-label">Wiederherstellung</div>
+            <div class="rc-risk-val">${recoveryDays}+ Tage</div>
+            <div class="rc-risk-desc">bis zur Normalisierung</div>
+          </div>
+        </div>
+        <div class="rc-recs">
+          <div class="rc-recs-title">Prioritäten für ${company}</div>
+          ${recs.map((r) => `<div class="rc-rec"><div class="rc-rec-dot"></div>${r}</div>`).join('')}
+          ${secScore < 3 ? '<div class="rc-rec"><div class="rc-rec-dot"></div>MFA und Datensicherungen sofort einführen</div>' : ''}
+        </div>
+        <div class="rc-cta">
+          <div class="rc-cta-text">
+            Schutz kostet 10–50× weniger als ein Vorfall.
+            <small>Kostenlose Beratung – wir zeigen konkrete Schritte für Ihr Unternehmen.</small>
+          </div>
+          <a class="rc-cta-btn" href="https://cybterra.com" target="_blank">Audit anfordern →</a>
+        </div>
+      </div>
+    `;
+
+        document.getElementById('results').classList.remove('hidden');
+        document
+          .getElementById('results')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    </script>
+  </body>
+</html>

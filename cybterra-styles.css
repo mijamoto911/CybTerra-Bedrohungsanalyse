@@ -1,0 +1,150 @@
+/* ============================================================
+   CybTerra · Bedrohungsanalyse + Risikorechner
+============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #fff; font-family: 'DM Sans', sans-serif; color: #111; }
+
+/* ── Wrapper ── */
+.ct-wrapper { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+/* ── Divider zwischen den Sektionen ── */
+.ct-divider { height: 0.5px; background: #e0e0dc; margin: 2.5rem 0; }
+
+/* ============================================================
+   BEDROHUNGSANALYSE
+   ============================================================ */
+
+.tw-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 8px; }
+.tw-logo { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: #111; }
+.tw-logo span { color: #1D9E75; }
+.tw-live { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #666; }
+.tw-dot { width: 7px; height: 7px; border-radius: 50%; background: #1D9E75; animation: ctBlink 1.5s infinite; display: inline-block; }
+@keyframes ctBlink { 0%,100%{ opacity:1 } 50%{ opacity:0.3 } }
+
+.tw-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+.tw-stat { background: #f7f7f5; border: 0.5px solid #e0e0dc; border-radius: 12px; padding: 1rem; }
+.tw-stat-n { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; color: #111; line-height: 1; }
+.tw-stat-n em { color: #1D9E75; font-style: normal; }
+.tw-stat-l { font-size: 12px; color: #666; margin-top: 5px; line-height: 1.4; }
+.tw-stat-s { font-size: 10px; color: #999; margin-top: 4px; }
+
+.tw-section { margin-bottom: 1.25rem; }
+.tw-section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.tw-section-title { font-size: 11px; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; color: #1D9E75; }
+.tw-badge { font-size: 11px; color: #666; background: #f7f7f5; border: 0.5px solid #e0e0dc; border-radius: 20px; padding: 3px 10px; }
+
+.tw-list { background: #f7f7f5; border: 0.5px solid #e0e0dc; border-radius: 12px; overflow: hidden; }
+
+.tw-cve-row { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 12px; padding: 10px 14px; border-bottom: 0.5px solid #e0e0dc; }
+.tw-cve-row:last-child { border-bottom: none; }
+.tw-cve-id { font-size: 12px; font-weight: 500; color: #1D9E75; font-family: 'Syne', sans-serif; white-space: nowrap; }
+.tw-cve-name { font-size: 13px; color: #111; }
+.tw-cve-vendor { font-size: 11px; color: #888; margin-top: 2px; }
+.tw-cve-date { font-size: 11px; color: #888; white-space: nowrap; text-align: right; }
+
+.tw-tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.tw-tab { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 0.5px solid #e0e0dc; background: transparent; color: #666; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background .15s, color .15s; }
+.tw-tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+
+.tw-news-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 10px 14px; border-bottom: 0.5px solid #e0e0dc; cursor: pointer; text-decoration: none; }
+.tw-news-row:last-child { border-bottom: none; }
+.tw-news-row:hover { background: #fff; }
+.tw-news-title { font-size: 13px; color: #111; line-height: 1.4; }
+.tw-news-src { font-size: 11px; color: #1D9E75; margin-top: 3px; }
+.tw-news-date { font-size: 11px; color: #888; white-space: nowrap; }
+
+.tw-loading { text-align: center; padding: 1.5rem; font-size: 13px; color: #888; }
+.tw-error { text-align: center; padding: 1rem; font-size: 12px; color: #888; }
+
+.tw-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 1rem; border-top: 0.5px solid #e0e0dc; margin-top: 1rem; }
+.tw-updated { font-size: 11px; color: #aaa; }
+.tw-cta-btn { background: #1D9E75; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; text-decoration: none; display: inline-block; transition: background .15s; }
+.tw-cta-btn:hover { background: #0F6E56; }
+
+/* ============================================================
+   RISIKORECHNER
+   ============================================================ */
+
+.rc-head { margin-bottom: 1.5rem; }
+.rc-logo { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: #111; margin-bottom: 4px; }
+.rc-logo span { color: #1D9E75; }
+.rc-sub { font-size: 13px; color: #666; line-height: 1.5; }
+
+.rc-step { background: #f7f7f5; border: 0.5px solid #e0e0dc; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+.rc-step-title { font-size: 11px; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; color: #1D9E75; margin-bottom: 1rem; }
+
+.rc-grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.rc-field { display: flex; flex-direction: column; gap: 5px; }
+.rc-field label { font-size: 12px; color: #666; }
+.rc-field input, .rc-field select { font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 8px 10px; border: 0.5px solid #ccc; border-radius: 8px; background: #fff; color: #111; width: 100%; outline: none; }
+.rc-field input:focus, .rc-field select:focus { border-color: #1D9E75; }
+
+.rc-checks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.rc-check { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px 10px; border: 0.5px solid #e0e0dc; border-radius: 8px; background: #fff; transition: border-color .15s, background .15s; user-select: none; }
+.rc-check.on { border-color: #1D9E75; background: #f0fbf7; }
+.rc-check-box { width: 15px; height: 15px; border: 1.5px solid #ccc; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.rc-check.on .rc-check-box { background: #1D9E75; border-color: #1D9E75; }
+.rc-check.on .rc-check-box::after { content: ''; width: 8px; height: 4px; border-left: 1.5px solid #fff; border-bottom: 1.5px solid #fff; transform: rotate(-45deg) translateY(-1px); display: block; }
+.rc-check-label { font-size: 13px; color: #111; line-height: 1.3; }
+
+.rc-btn { width: 100%; padding: 12px; background: #1D9E75; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-top: 0.5rem; transition: background .15s; }
+.rc-btn:hover { background: #0F6E56; }
+
+.rc-results { border: 0.5px solid #e0e0dc; border-radius: 12px; overflow: hidden; margin-top: 1.5rem; }
+.rc-results-head { background: #1D9E75; padding: 1rem 1.25rem; }
+.rc-results-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #fff; }
+.rc-results-company { font-size: 12px; color: #9FE1CB; margin-top: 2px; }
+.rc-results-body { padding: 1.25rem; }
+
+.rc-total { display: flex; align-items: baseline; gap: 10px; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 0.5px solid #e0e0dc; flex-wrap: wrap; }
+.rc-total-num { font-family: 'Syne', sans-serif; font-size: 40px; font-weight: 700; color: #E24B4A; }
+.rc-total-label { font-size: 13px; color: #666; line-height: 1.4; }
+
+.rc-items { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
+.rc-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.rc-item-label { font-size: 12px; color: #666; min-width: 180px; }
+.rc-item-bar-wrap { flex: 1; min-width: 60px; height: 6px; background: #f0f0ec; border-radius: 3px; overflow: hidden; }
+.rc-item-bar { height: 100%; background: #E24B4A; border-radius: 3px; transition: width .6s ease; }
+.rc-item-val { font-size: 13px; font-weight: 500; color: #111; min-width: 80px; text-align: right; font-family: 'Syne', sans-serif; }
+
+.rc-risk-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+.rc-risk { border-radius: 8px; padding: .75rem; border: 0.5px solid #e0e0dc; }
+.rc-risk.high { background: #FCEBEB; border-color: #F09595; }
+.rc-risk.med  { background: #FAEEDA; border-color: #FAC775; }
+.rc-risk.low  { background: #EAF3DE; border-color: #C0DD97; }
+.rc-risk-label { font-size: 11px; font-weight: 500; letter-spacing: .8px; text-transform: uppercase; }
+.rc-risk.high .rc-risk-label { color: #A32D2D; }
+.rc-risk.med  .rc-risk-label { color: #854F0B; }
+.rc-risk.low  .rc-risk-label { color: #3B6D11; }
+.rc-risk-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin: 4px 0 2px; }
+.rc-risk.high .rc-risk-val { color: #A32D2D; }
+.rc-risk.med  .rc-risk-val { color: #854F0B; }
+.rc-risk.low  .rc-risk-val { color: #3B6D11; }
+.rc-risk-desc { font-size: 11px; }
+.rc-risk.high .rc-risk-desc { color: #791F1F; }
+.rc-risk.med  .rc-risk-desc { color: #633806; }
+.rc-risk.low  .rc-risk-desc { color: #27500A; }
+
+.rc-recs { border-top: 0.5px solid #e0e0dc; padding-top: 1rem; }
+.rc-recs-title { font-size: 12px; font-weight: 500; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .5px; }
+.rc-rec { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 13px; color: #111; }
+.rc-rec-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; margin-top: 5px; flex-shrink: 0; }
+
+.rc-cta { margin-top: 1.25rem; background: #f7f7f5; border-radius: 8px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border: 0.5px solid #e0e0dc; }
+.rc-cta-text { font-size: 13px; color: #111; }
+.rc-cta-text small { display: block; font-size: 11px; color: #666; margin-top: 2px; }
+.rc-cta-link { background: #1D9E75; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; text-decoration: none; display: inline-block; white-space: nowrap; }
+.rc-cta-link:hover { background: #0F6E56; }
+
+.hidden { display: none !important; }
+
+/* ── Responsive ── */
+@media (max-width: 540px) {
+  .tw-stats { grid-template-columns: 1fr 1fr; }
+  .rc-grid2 { grid-template-columns: 1fr; }
+  .rc-checks { grid-template-columns: 1fr; }
+  .rc-risk-row { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CybTerra · Bedrohungsanalyse</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #fff;
+        font-family: 'DM Sans', sans-serif;
+        color: #111;
+      }
+
+      .tw-root {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+
+      .tw-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .tw-logo {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 18px;
+        color: #111;
+      }
+      .tw-logo span {
+        color: #1d9e75;
+      }
+      .tw-live {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #666;
+      }
+      .tw-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #1d9e75;
+        animation: blink 1.5s infinite;
+        display: inline-block;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      .tw-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 1.25rem;
+      }
+      @media (max-width: 500px) {
+        .tw-stats {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .tw-stat {
+        background: #f7f7f5;
+        border: 0.5px solid #e0e0dc;
+        border-radius: 12px;
+        padding: 1rem;
+      }
+      .tw-stat-n {
+        font-family: 'Syne', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: #111;
+        line-height: 1;
+      }
+      .tw-stat-n em {
+        color: #1d9e75;
+        font-style: normal;
+      }
+      .tw-stat-l {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+        line-height: 1.4;
+      }
+      .tw-stat-s {
+        font-size: 10px;
+        color: #999;
+        margin-top: 4px;
+      }
+
+      .tw-section {
+        margin-bottom: 1.25rem;
+      }
+      .tw-section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .tw-section-title {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #1d9e75;
+      }
+      .tw-badge {
+        font-size: 11px;
+        color: #666;
+        background: #f7f7f5;
+        border: 0.5px solid #e0e0dc;
+        border-radius: 20px;
+        padding: 3px 10px;
+      }
+
+      .tw-list {
+        background: #f7f7f5;
+        border: 0.5px solid #e0e0dc;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .tw-cve-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: start;
+        gap: 12px;
+        padding: 10px 14px;
+        border-bottom: 0.5px solid #e0e0dc;
+      }
+      .tw-cve-row:last-child {
+        border-bottom: none;
+      }
+      .tw-cve-id {
+        font-size: 12px;
+        font-weight: 500;
+        color: #1d9e75;
+        font-family: 'Syne', sans-serif;
+        white-space: nowrap;
+      }
+      .tw-cve-name {
+        font-size: 13px;
+        color: #111;
+      }
+      .tw-cve-vendor {
+        font-size: 11px;
+        color: #888;
+        margin-top: 2px;
+      }
+      .tw-cve-date {
+        font-size: 11px;
+        color: #888;
+        white-space: nowrap;
+        text-align: right;
+      }
+
+      .tw-tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .tw-tab {
+        font-size: 12px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        border: 0.5px solid #e0e0dc;
+        background: transparent;
+        color: #666;
+        cursor: pointer;
+        font-family: 'DM Sans', sans-serif;
+      }
+      .tw-tab.active {
+        background: #1d9e75;
+        color: #fff;
+        border-color: #1d9e75;
+      }
+
+      .tw-news-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px 14px;
+        border-bottom: 0.5px solid #e0e0dc;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .tw-news-row:last-child {
+        border-bottom: none;
+      }
+      .tw-news-row:hover {
+        background: #fff;
+      }
+      .tw-news-title {
+        font-size: 13px;
+        color: #111;
+        line-height: 1.4;
+      }
+      .tw-news-src {
+        font-size: 11px;
+        color: #1d9e75;
+        margin-top: 3px;
+      }
+      .tw-news-date {
+        font-size: 11px;
+        color: #888;
+        white-space: nowrap;
+      }
+
+      .tw-loading {
+        text-align: center;
+        padding: 1.5rem;
+        font-size: 13px;
+        color: #888;
+      }
+      .tw-error {
+        text-align: center;
+        padding: 1rem;
+        font-size: 12px;
+        color: #888;
+      }
+
+      .tw-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 1rem;
+        border-top: 0.5px solid #e0e0dc;
+        margin-top: 1rem;
+      }
+      .tw-updated {
+        font-size: 11px;
+        color: #aaa;
+      }
+      .tw-cta-btn {
+        background: #1d9e75;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 18px;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+      }
+      .tw-cta-btn:hover {
+        background: #0f6e56;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tw-root">
+      <div class="tw-header">
+        <div class="tw-logo">Cyb<span>Terra</span> · Bedrohungsanalyse</div>
+        <div class="tw-live"><span class="tw-dot"></span> Live-Daten</div>
+      </div>
+
+      <div class="tw-stats">
+        <div class="tw-stat">
+          <div class="tw-stat-n"><em>83</em>%</div>
+          <div class="tw-stat-l">
+            der Unternehmen erlitten mindestens einen Angriff
+          </div>
+          <div class="tw-stat-s">IBM 2024</div>
+        </div>
+        <div class="tw-stat">
+          <div class="tw-stat-n">$<em>4,88</em>M</div>
+          <div class="tw-stat-l">durchschnittliche Kosten eines Vorfalls</div>
+          <div class="tw-stat-s">IBM 2024</div>
+        </div>
+        <div class="tw-stat">
+          <div class="tw-stat-n"><em id="cve-count">...</em></div>
+          <div class="tw-stat-l">
+            aktive Schwachstellen in der CISA-Datenbank
+          </div>
+          <div class="tw-stat-s">cisa.gov · live</div>
+        </div>
+      </div>
+
+      <!-- CISA KEV -->
+      <div class="tw-section">
+        <div class="tw-section-head">
+          <div class="tw-section-title">Neue Schwachstellen · CISA KEV</div>
+          <div class="tw-badge" id="cve-badge">wird geladen...</div>
+        </div>
+        <div class="tw-list" id="cve-list">
+          <div class="tw-loading">CISA-Daten werden geladen...</div>
+        </div>
+      </div>
+
+      <!-- News -->
+      <div class="tw-section">
+        <div class="tw-section-head">
+          <div class="tw-section-title">
+            Aktuelle Nachrichten · The Hacker News
+          </div>
+        </div>
+        <div class="tw-tabs">
+          <button class="tw-tab active" onclick="filterNews('all', this)">
+            Alle
+          </button>
+          <button class="tw-tab" onclick="filterNews('breach', this)">
+            Datenlecks
+          </button>
+          <button class="tw-tab" onclick="filterNews('ransomware', this)">
+            Ransomware
+          </button>
+          <button class="tw-tab" onclick="filterNews('vulnerability', this)">
+            Schwachstellen
+          </button>
+        </div>
+        <div class="tw-list" id="news-list">
+          <div class="tw-loading">Nachrichten werden geladen...</div>
+        </div>
+      </div>
+
+      <div class="tw-footer">
+        <div class="tw-updated" id="updated-time"></div>
+        <a class="tw-cta-btn" href="https://cybterra.com" target="_blank"
+          >Eigenen Schutz prüfen →</a
+        >
+      </div>
+    </div>
+
+    <script>
+      let allNews = [];
+
+      async function loadCISA() {
+        try {
+          const r = await fetch(
+            'https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json',
+          );
+          const d = await r.json();
+          const vulns = d.vulnerabilities || [];
+
+          document.getElementById('cve-count').textContent =
+            vulns.length.toLocaleString('de-DE');
+
+          const recent = vulns.slice(-8).reverse();
+          const addedDate = recent[0]?.dateAdded
+            ? new Date(recent[0].dateAdded).toLocaleDateString('de-DE', {
+                day: 'numeric',
+                month: 'short',
+              })
+            : 'heute';
+          document.getElementById('cve-badge').textContent =
+            'aktualisiert ' + addedDate;
+
+          document.getElementById('cve-list').innerHTML = recent
+            .map((v) => {
+              const name =
+                v.vulnerabilityName ||
+                v.shortDescription ||
+                'Unbekannte Schwachstelle';
+              const short = name.length > 65 ? name.slice(0, 65) + '…' : name;
+              const date = v.dateAdded
+                ? new Date(v.dateAdded).toLocaleDateString('de-DE', {
+                    day: 'numeric',
+                    month: 'short',
+                  })
+                : '';
+              return `<div class="tw-cve-row">
+          <div>
+            <div class="tw-cve-id">${v.cveID}</div>
+            <div class="tw-cve-name">${short}</div>
+            <div class="tw-cve-vendor">${v.vendorProject || ''} · ${v.product || ''}</div>
+          </div>
+          <div class="tw-cve-date">${date}</div>
+        </div>`;
+            })
+            .join('');
+        } catch (e) {
+          document.getElementById('cve-count').textContent = '1.000+';
+          document.getElementById('cve-badge').textContent = 'cisa.gov';
+          document.getElementById('cve-list').innerHTML =
+            '<div class="tw-error">CISA-Daten vorübergehend nicht verfügbar.<br>Besuchen Sie <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">cisa.gov</a></div>';
+        }
+      }
+
+      async function loadNews() {
+        const feeds = [
+          'https://feeds.feedburner.com/TheHackersNews',
+          'https://www.bleepingcomputer.com/feed/',
+        ];
+        const proxy = 'https://api.rss2json.com/v1/api.json?rss_url=';
+        try {
+          const results = await Promise.allSettled(
+            feeds.map((f) =>
+              fetch(proxy + encodeURIComponent(f)).then((r) => r.json()),
+            ),
+          );
+          const items = [];
+          results.forEach((r, i) => {
+            if (r.status === 'fulfilled' && r.value.items) {
+              const src = i === 0 ? 'The Hacker News' : 'BleepingComputer';
+              r.value.items.slice(0, 8).forEach((item) => {
+                items.push({
+                  title: item.title,
+                  link: item.link,
+                  date: new Date(item.pubDate),
+                  src,
+                  tags: (
+                    item.title +
+                    ' ' +
+                    (item.description || '')
+                  ).toLowerCase(),
+                });
+              });
+            }
+          });
+          items.sort((a, b) => b.date - a.date);
+          allNews = items;
+          renderNews(items);
+        } catch (e) {
+          renderFallback();
+        }
+      }
+
+      function renderNews(items) {
+        if (!items.length) {
+          renderFallback();
+          return;
+        }
+        document.getElementById('news-list').innerHTML = items
+          .slice(0, 7)
+          .map((item) => {
+            const t =
+              item.title.length > 85
+                ? item.title.slice(0, 85) + '…'
+                : item.title;
+            return `<a class="tw-news-row" href="${item.link}" target="_blank" rel="noopener">
+        <div>
+          <div class="tw-news-title">${t}</div>
+          <div class="tw-news-src">${item.src}</div>
+        </div>
+        <div class="tw-news-date">${getAgo(item.date)}</div>
+      </a>`;
+          })
+          .join('');
+      }
+
+      function renderFallback() {
+        const news = [
+          {
+            title: 'Ransomware-Angriffe auf KMU stiegen 2025 um 88 %',
+            src: 'Cybersecurity Ventures',
+            ago: '2025',
+          },
+          {
+            title:
+              'Lieferkettenangriffe: 30 % aller Datenverletzungen betroffen',
+            src: 'Verizon DBIR',
+            ago: '2025',
+          },
+          {
+            title: 'API-Schwachstellen stiegen um 181 % im Jahresvergleich',
+            src: 'Security Boulevard',
+            ago: '2026',
+          },
+          {
+            title:
+              '131 neue CVEs täglich – mittlere Ausnutzungszeit unter 5 Tagen',
+            src: 'NVD / CISA',
+            ago: '2026',
+          },
+          {
+            title:
+              'Durchschnittlich 207 Tage bis zur Erkennung ohne Monitoring',
+            src: 'IBM Security',
+            ago: '2024',
+          },
+        ];
+        document.getElementById('news-list').innerHTML = news
+          .map(
+            (n) =>
+              `<div class="tw-news-row">
+        <div><div class="tw-news-title">${n.title}</div><div class="tw-news-src">${n.src}</div></div>
+        <div class="tw-news-date">${n.ago}</div>
+      </div>`,
+          )
+          .join('');
+      }
+
+      function filterNews(tag, btn) {
+        document
+          .querySelectorAll('.tw-tab')
+          .forEach((t) => t.classList.remove('active'));
+        btn.classList.add('active');
+        if (tag === 'all') {
+          renderNews(allNews);
+          return;
+        }
+        const filtered = allNews.filter((n) => n.tags.includes(tag));
+        renderNews(filtered.length ? filtered : allNews);
+      }
+
+      function getAgo(date) {
+        const diff = (Date.now() - date) / 1000;
+        if (diff < 3600) return Math.floor(diff / 60) + ' Min. ago';
+        if (diff < 86400) return Math.floor(diff / 3600) + ' Std. ago';
+        if (diff < 604800) return Math.floor(diff / 86400) + ' Tage ago';
+        return date.toLocaleDateString('de-DE', {
+          day: 'numeric',
+          month: 'short',
+        });
+      }
+
+      document.getElementById('updated-time').textContent =
+        'Aktualisiert: ' +
+        new Date().toLocaleString('de-DE', {
+          day: 'numeric',
+          month: 'long',
+          hour: '2-digit',
+          minute: '2-digit',
+        }) +
+        ' Uhr';
+
+      loadCISA();
+      loadNews();
+    </script>
+  </body>
+</html>
