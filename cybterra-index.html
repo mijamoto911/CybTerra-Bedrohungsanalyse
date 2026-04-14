@@ -4,27 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CybTerra · Bedrohungsanalyse & Risikorechner</title>
-
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-
-  <!-- CybTerra Stile -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
 <div class="ct-wrapper">
 
-  <!-- ════════════════════════════════════════
+  <!-- ═══════════════════════════════
        SEKTION 1 — BEDROHUNGSANALYSE
-  ════════════════════════════════════════ -->
+  ═══════════════════════════════ -->
 
   <div class="tw-header">
     <div class="tw-logo">Cyb<span>Terra</span> · Bedrohungsanalyse</div>
     <div class="tw-live"><span class="tw-dot"></span> Live-Daten</div>
   </div>
 
-  <!-- Statistiken -->
   <div class="tw-stats">
     <div class="tw-stat">
       <div class="tw-stat-n"><em>83</em>%</div>
@@ -43,7 +38,6 @@
     </div>
   </div>
 
-  <!-- CISA KEV -->
   <div class="tw-section">
     <div class="tw-section-head">
       <div class="tw-section-title">Neue Schwachstellen · CISA KEV</div>
@@ -54,7 +48,6 @@
     </div>
   </div>
 
-  <!-- Nachrichten -->
   <div class="tw-section">
     <div class="tw-section-head">
       <div class="tw-section-title">Aktuelle Nachrichten · The Hacker News</div>
@@ -70,25 +63,22 @@
     </div>
   </div>
 
-  <!-- Footer Sektion 1 -->
   <div class="tw-footer">
     <div class="tw-updated" id="updated-time"></div>
     <a class="tw-cta-btn" href="https://cybterra.com" target="_blank">Eigenen Schutz prüfen →</a>
   </div>
 
-  <!-- Trennlinie -->
   <div class="ct-divider"></div>
 
-  <!-- ════════════════════════════════════════
+  <!-- ═══════════════════════════════
        SEKTION 2 — RISIKORECHNER
-  ════════════════════════════════════════ -->
+  ═══════════════════════════════ -->
 
   <div class="rc-head">
     <div class="rc-logo">Cyb<span>Terra</span> · Risikorechner</div>
     <div class="rc-sub">Geben Sie Ihre Unternehmensdaten ein – und erhalten Sie eine Schätzung der potenziellen Verluste ohne Cyberschutz.</div>
   </div>
 
-  <!-- Schritt 1: Unternehmen -->
   <div class="rc-step">
     <div class="rc-step-title">Über das Unternehmen</div>
     <div class="rc-grid2">
@@ -125,64 +115,104 @@
     </div>
   </div>
 
-  <!-- Schritt 2: Daten -->
   <div class="rc-step">
     <div class="rc-step-title">Welche Daten speichert das Unternehmen</div>
     <div class="rc-checks" id="data-checks">
-      <div class="rc-check on" data-val="customer">
-        <div class="rc-check-box"></div><span class="rc-check-label">Kundendaten</span>
-      </div>
-      <div class="rc-check" data-val="payment">
-        <div class="rc-check-box"></div><span class="rc-check-label">Zahlungsdaten / Karten</span>
-      </div>
-      <div class="rc-check" data-val="health">
-        <div class="rc-check-box"></div><span class="rc-check-label">Medizinische Unterlagen</span>
-      </div>
-      <div class="rc-check on" data-val="ip">
-        <div class="rc-check-box"></div><span class="rc-check-label">Geistiges Eigentum</span>
-      </div>
-      <div class="rc-check" data-val="employee">
-        <div class="rc-check-box"></div><span class="rc-check-label">Mitarbeiterdaten</span>
-      </div>
-      <div class="rc-check" data-val="financial">
-        <div class="rc-check-box"></div><span class="rc-check-label">Finanzberichte</span>
-      </div>
+      <div class="rc-check on" data-val="customer"><div class="rc-check-box"></div><span class="rc-check-label">Kundendaten</span></div>
+      <div class="rc-check" data-val="payment"><div class="rc-check-box"></div><span class="rc-check-label">Zahlungsdaten / Karten</span></div>
+      <div class="rc-check" data-val="health"><div class="rc-check-box"></div><span class="rc-check-label">Medizinische Unterlagen</span></div>
+      <div class="rc-check on" data-val="ip"><div class="rc-check-box"></div><span class="rc-check-label">Geistiges Eigentum</span></div>
+      <div class="rc-check" data-val="employee"><div class="rc-check-box"></div><span class="rc-check-label">Mitarbeiterdaten</span></div>
+      <div class="rc-check" data-val="financial"><div class="rc-check-box"></div><span class="rc-check-label">Finanzberichte</span></div>
     </div>
   </div>
 
-  <!-- Schritt 3: Sicherheit -->
   <div class="rc-step">
     <div class="rc-step-title">Aktueller Sicherheitsstatus</div>
     <div class="rc-checks" id="security-checks">
-      <div class="rc-check" data-val="antivirus">
-        <div class="rc-check-box"></div><span class="rc-check-label">Antivirensoftware / EDR</span>
-      </div>
-      <div class="rc-check" data-val="firewall">
-        <div class="rc-check-box"></div><span class="rc-check-label">Firewall konfiguriert</span>
-      </div>
-      <div class="rc-check" data-val="backup">
-        <div class="rc-check-box"></div><span class="rc-check-label">Datensicherungen (Backups)</span>
-      </div>
-      <div class="rc-check" data-val="mfa">
-        <div class="rc-check-box"></div><span class="rc-check-label">Zwei-Faktor-Authentifizierung</span>
-      </div>
-      <div class="rc-check" data-val="training">
-        <div class="rc-check-box"></div><span class="rc-check-label">Mitarbeiterschulungen</span>
-      </div>
-      <div class="rc-check" data-val="pentest">
-        <div class="rc-check-box"></div><span class="rc-check-label">Penetrationstest / Audit</span>
-      </div>
+      <div class="rc-check" data-val="antivirus"><div class="rc-check-box"></div><span class="rc-check-label">Antivirensoftware / EDR</span></div>
+      <div class="rc-check" data-val="firewall"><div class="rc-check-box"></div><span class="rc-check-label">Firewall konfiguriert</span></div>
+      <div class="rc-check" data-val="backup"><div class="rc-check-box"></div><span class="rc-check-label">Datensicherungen (Backups)</span></div>
+      <div class="rc-check" data-val="mfa"><div class="rc-check-box"></div><span class="rc-check-label">Zwei-Faktor-Authentifizierung</span></div>
+      <div class="rc-check" data-val="training"><div class="rc-check-box"></div><span class="rc-check-label">Mitarbeiterschulungen</span></div>
+      <div class="rc-check" data-val="pentest"><div class="rc-check-box"></div><span class="rc-check-label">Penetrationstest / Audit</span></div>
     </div>
   </div>
 
   <button class="rc-btn" onclick="calculate()">Risiken berechnen →</button>
-
-  <!-- Ergebnisse (werden per JS befüllt) -->
   <div id="results" class="rc-results hidden"></div>
+
+  <div class="ct-divider"></div>
+
+  <!-- ═══════════════════════════════
+       SEKTION 3 — KI-CHATBOT
+  ═══════════════════════════════ -->
+
+  <!-- Lizenz-Modal (fixed über alles) -->
+  <div class="modal-bg hidden" id="activateModal">
+    <div class="modal">
+      <h3>Paket aktivieren</h3>
+      <p>Geben Sie Ihren Lizenzschlüssel ein, den Sie nach dem Kauf per E-Mail erhalten haben.</p>
+      <div class="pro-topics">
+        <strong>Damit schalten Sie frei:</strong>
+        <div class="pro-topic">Antivirus-Installation (Schritt für Schritt)</div>
+        <div class="pro-topic">Firewall einrichten (Windows / Linux / macOS)</div>
+        <div class="pro-topic">Sicheres Passwort-Management</div>
+        <div class="pro-topic">2FA / MFA konfigurieren</div>
+        <div class="pro-topic">Backup-Strategien & Wiederherstellung</div>
+        <div class="pro-topic">GDPR / DSGVO Grundlagen</div>
+        <div class="pro-topic">Netzwerksicherheit & VPN</div>
+        <div class="pro-topic">Incident Response Checkliste</div>
+      </div>
+      <div class="modal-error hidden" id="keyError">Ungültiger Schlüssel. Bitte prüfen Sie Ihre E-Mail.</div>
+      <input class="modal-input" type="text" id="licenseInput" placeholder="z. B. CT-XXXX-XXXX-XXXX" />
+      <button class="modal-btn" onclick="activateLicense()">Aktivieren</button>
+      <button class="modal-cancel" onclick="closeModal()">Abbrechen</button>
+    </div>
+  </div>
+
+  <!-- Chat-Widget -->
+  <div class="chat-shell">
+    <div class="chat-header">
+      <div class="chat-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" width="18" height="18">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="chat-header-info">
+        <div class="chat-title">Cyb<span>Terra</span> Assistent</div>
+        <div class="chat-subtitle">KI-gestützter Sicherheitsberater</div>
+      </div>
+      <div class="chat-status">
+        <span class="status-dot"></span> Online
+      </div>
+      <button class="access-badge free" id="accessBadge" onclick="openModal()">Kostenlos</button>
+    </div>
+
+    <div class="chat-messages" id="messages"></div>
+
+    <div class="quick-replies" id="quickReplies"></div>
+
+    <div class="chat-input-wrap">
+      <textarea
+        class="chat-input"
+        id="userInput"
+        placeholder="Stellen Sie Ihre Frage..."
+        rows="1"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" width="16" height="16">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
 
 </div><!-- /.ct-wrapper -->
 
-<!-- CybTerra JavaScript -->
 <script src="script.js"></script>
 
 </body>
