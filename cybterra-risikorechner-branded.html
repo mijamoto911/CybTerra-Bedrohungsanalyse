@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CybTerra · Impactrechner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:#fff;font-family:'DM Sans',sans-serif;color:#111;}
+    .rc{max-width:720px;margin:0 auto;padding:2rem 1.5rem;}
+    .rc-head{margin-bottom:1.5rem;}
+    .rc-logo{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:#111;margin-bottom:4px;}
+    .rc-logo span{color:#1D9E75;}
+    .rc-sub{font-size:13px;color:#666;line-height:1.5;}
+    .rc-step{background:#f7f7f5;border:0.5px solid #e0e0dc;border-radius:12px;padding:1.25rem;margin-bottom:1rem;}
+    .rc-step-title{font-size:11px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:#1D9E75;margin-bottom:1rem;}
+    .rc-grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+    .rc-field{display:flex;flex-direction:column;gap:5px;}
+    .rc-field label{font-size:12px;color:#666;}
+    .rc-field input,.rc-field select{font-family:'DM Sans',sans-serif;font-size:14px;padding:8px 10px;border:0.5px solid #ccc;border-radius:8px;background:#fff;color:#111;width:100%;outline:none;}
+    .rc-field input:focus,.rc-field select:focus{border-color:#1D9E75;}
+    .rc-checks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+    .rc-check{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 10px;border:0.5px solid #e0e0dc;border-radius:8px;background:#fff;transition:border-color .15s,background .15s;user-select:none;}
+    .rc-check.on{border-color:#1D9E75;background:#f0fbf7;}
+    .rc-check-box{width:15px;height:15px;border:1.5px solid #ccc;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+    .rc-check.on .rc-check-box{background:#1D9E75;border-color:#1D9E75;}
+    .rc-check.on .rc-check-box::after{content:'';width:8px;height:4px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translateY(-1px);display:block;}
+    .rc-check-label{font-size:13px;color:#111;line-height:1.3;}
+    .rc-btn{width:100%;padding:12px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:.5rem;transition:background .15s;}
+    .rc-btn:hover{background:#0F6E56;}
+    .rc-results{border:0.5px solid #e0e0dc;border-radius:12px;overflow:hidden;margin-top:1.5rem;}
+    .rc-results-head{background:#1D9E75;padding:1rem 1.25rem;}
+    .rc-results-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+    .rc-results-company{font-size:12px;color:#9FE1CB;margin-top:2px;}
+    .rc-results-body{padding:1.25rem;}
+    .rc-total{display:flex;align-items:baseline;gap:10px;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:0.5px solid #e0e0dc;flex-wrap:wrap;}
+    .rc-total-num{font-family:'Syne',sans-serif;font-size:40px;font-weight:700;color:#E24B4A;}
+    .rc-total-label{font-size:13px;color:#666;line-height:1.4;}
+    .rc-items{display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem;}
+    .rc-item{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+    .rc-item-label{font-size:12px;color:#666;min-width:180px;}
+    .rc-item-bar-wrap{flex:1;min-width:60px;height:6px;background:#f0f0ec;border-radius:3px;overflow:hidden;}
+    .rc-item-bar{height:100%;background:#E24B4A;border-radius:3px;transition:width .6s ease;}
+    .rc-item-val{font-size:13px;font-weight:500;color:#111;min-width:80px;text-align:right;font-family:'Syne',sans-serif;}
+    .rc-risk-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem;}
+    .rc-risk{border-radius:8px;padding:.75rem;border:0.5px solid #e0e0dc;}
+    .rc-risk.high{background:#FCEBEB;border-color:#F09595;}
+    .rc-risk.med{background:#FAEEDA;border-color:#FAC775;}
+    .rc-risk.low{background:#EAF3DE;border-color:#C0DD97;}
+    .rc-risk-label{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;}
+    .rc-risk.high .rc-risk-label{color:#A32D2D;}
+    .rc-risk.med .rc-risk-label{color:#854F0B;}
+    .rc-risk.low .rc-risk-label{color:#3B6D11;}
+    .rc-risk-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin:4px 0 2px;}
+    .rc-risk.high .rc-risk-val{color:#A32D2D;}
+    .rc-risk.med .rc-risk-val{color:#854F0B;}
+    .rc-risk.low .rc-risk-val{color:#3B6D11;}
+    .rc-risk-desc{font-size:11px;}
+    .rc-risk.high .rc-risk-desc{color:#791F1F;}
+    .rc-risk.med .rc-risk-desc{color:#633806;}
+    .rc-risk.low .rc-risk-desc{color:#27500A;}
+    .rc-section{margin-bottom:1.25rem;}
+    .rc-section-title{font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#1D9E75;margin-bottom:8px;}
+    .rc-recs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:1.25rem;}
+    .rc-rec-card{border-radius:8px;border:0.5px solid #e0e0dc;padding:.875rem;background:#fff;}
+    .rc-rec-card.critical{border-left:3px solid #E24B4A;background:#FFF9F9;}
+    .rc-rec-card.important{border-left:3px solid #F5A623;background:#FFFDF5;}
+    .rc-rec-card.recommended{border-left:3px solid #1D9E75;background:#F5FFFA;}
+    .rc-rec-priority{font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;}
+    .critical .rc-rec-priority{color:#E24B4A;}
+    .important .rc-rec-priority{color:#854F0B;}
+    .recommended .rc-rec-priority{color:#1D9E75;}
+    .rc-rec-title{font-size:13px;font-weight:500;color:#111;margin-bottom:3px;}
+    .rc-rec-desc{font-size:12px;color:#666;line-height:1.5;}
+    .rc-rec-tool{font-size:11px;color:#1D9E75;margin-top:5px;font-weight:500;}
+    .rc-compliance{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem;}
+    .rc-comp-tag{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;}
+    .comp-required{background:#FCEBEB;color:#A32D2D;border:0.5px solid #F09595;}
+    .comp-recommended{background:#FAEEDA;color:#854F0B;border:0.5px solid #FAC775;}
+    .comp-optional{background:#f7f7f5;color:#666;border:0.5px solid #e0e0dc;}
+    .rc-threat-list{background:#f7f7f5;border-radius:8px;padding:.875rem 1rem;margin-bottom:1.25rem;}
+    .rc-threat-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid #e0e0dc;font-size:12px;}
+    .rc-threat-row:last-child{border-bottom:none;}
+    .rc-threat-name{color:#111;}
+    .rc-threat-prob{font-weight:500;padding:2px 8px;border-radius:10px;font-size:11px;}
+    .prob-high{background:#FCEBEB;color:#A32D2D;}
+    .prob-med{background:#FAEEDA;color:#854F0B;}
+    .rc-cta{margin-top:1.25rem;background:#f7f7f5;border-radius:8px;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border:0.5px solid #e0e0dc;}
+    .rc-cta-text{font-size:13px;color:#111;}
+    .rc-cta-text small{display:block;font-size:11px;color:#666;margin-top:2px;}
+    .rc-cta-link{background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;text-decoration:none;display:inline-block;white-space:nowrap;}
+    .rc-cta-link:hover{background:#0F6E56;}
+    .rc-score-bar{margin-bottom:1.25rem;}
+    .rc-score-label{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px;}
+    .rc-score-track{height:8px;background:#f0f0ec;border-radius:4px;overflow:hidden;}
+    .rc-score-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+    .hidden{display:none!important;}
+    @media(max-width:500px){.rc-grid2,.rc-checks,.rc-recs-grid,.rc-risk-row{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<div class="rc">
+  <div class="rc-head">
+    <div class="rc-logo">Cyb<span>Terra</span> · Impactrechner</div>
+    <div class="rc-sub">Geben Sie Ihre Unternehmensdaten ein – und erhalten Sie eine Schätzung der potenziellen Verluste ohne Cyberschutz.</div>
+  </div>
+
+  <div class="rc-step">
+    <div class="rc-step-title">Über das Unternehmen</div>
+    <div class="rc-grid2">
+      <div class="rc-field"><label>Unternehmensname</label><input type="text" id="company" placeholder="z. B. Muster GmbH"/></div>
+      <div class="rc-field"><label>Branche</label>
+        <select id="industry">
+          <optgroup label="Finanzen &amp; Recht">
+            <option value="fintech">Fintech / Banking</option>
+            <option value="insurance">Versicherungen</option>
+            <option value="lawfirm">Anwaltskanzlei / Rechtsberatung</option>
+            <option value="accounting">Steuerberatung / Buchhaltung</option>
+          </optgroup>
+          <optgroup label="Gesundheit &amp; Soziales">
+            <option value="healthcare">Arztpraxis / Klinik</option>
+            <option value="pharmacy">Apotheke</option>
+            <option value="dental">Zahnarztpraxis</option>
+            <option value="ngo">NGO / Soziale Einrichtung</option>
+          </optgroup>
+          <optgroup label="Technologie &amp; Digital">
+            <option value="saas">SaaS / IT-Produkt</option>
+            <option value="outsourcing">IT-Outsourcing / MSP</option>
+            <option value="agency">Digitalagentur / Marketing</option>
+            <option value="ecommerce">E-Commerce / Online-Handel</option>
+          </optgroup>
+          <optgroup label="Industrie &amp; Handel">
+            <option value="manufacturing">Produktion / Industrie</option>
+            <option value="retail">Einzelhandel / Filialen</option>
+            <option value="logistics">Logistik / Transport</option>
+            <option value="realestate">Immobilien</option>
+          </optgroup>
+          <optgroup label="Bildung &amp; Medien">
+            <option value="education">Bildung / Weiterbildung</option>
+            <option value="media">Medien / Journalismus</option>
+          </optgroup>
+          <optgroup label="Sonstiges">
+            <option value="other">Sonstiges</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="rc-field"><label>Anzahl der Mitarbeiter</label>
+        <select id="employees">
+          <option value="5">1–10</option>
+          <option value="25" selected>11–50</option>
+          <option value="100">51–200</option>
+          <option value="350">201–500</option>
+          <option value="750">500+</option>
+        </select>
+      </div>
+      <div class="rc-field"><label>Jahresumsatz (Tsd. €)</label><input type="number" id="revenue" placeholder="500" min="10" value="500"/></div>
+    </div>
+  </div>
+
+  <div class="rc-step">
+    <div class="rc-step-title">Welche Daten speichert das Unternehmen</div>
+    <div class="rc-checks" id="data-checks">
+      <div class="rc-check on" data-val="customer"><div class="rc-check-box"></div><span class="rc-check-label">Kundendaten</span></div>
+      <div class="rc-check" data-val="payment"><div class="rc-check-box"></div><span class="rc-check-label">Zahlungsdaten / Karten</span></div>
+      <div class="rc-check" data-val="health"><div class="rc-check-box"></div><span class="rc-check-label">Medizinische / Patientendaten</span></div>
+      <div class="rc-check on" data-val="ip"><div class="rc-check-box"></div><span class="rc-check-label">Geistiges Eigentum / Verträge</span></div>
+      <div class="rc-check" data-val="employee"><div class="rc-check-box"></div><span class="rc-check-label">Mitarbeiterdaten</span></div>
+      <div class="rc-check" data-val="financial"><div class="rc-check-box"></div><span class="rc-check-label">Finanzberichte / Buchhaltung</span></div>
+      <div class="rc-check" data-val="legal"><div class="rc-check-box"></div><span class="rc-check-label">Vertrauliche Mandanten- / Falldaten</span></div>
+      <div class="rc-check" data-val="personal"><div class="rc-check-box"></div><span class="rc-check-label">Personenbezogene Daten (DSGVO)</span></div>
+    </div>
+  </div>
+
+  <div class="rc-step">
+    <div class="rc-step-title">Aktueller Sicherheitsstatus</div>
+    <div class="rc-checks" id="security-checks">
+      <div class="rc-check" data-val="antivirus"><div class="rc-check-box"></div><span class="rc-check-label">Antivirensoftware / EDR</span></div>
+      <div class="rc-check" data-val="firewall"><div class="rc-check-box"></div><span class="rc-check-label">Firewall konfiguriert</span></div>
+      <div class="rc-check" data-val="backup"><div class="rc-check-box"></div><span class="rc-check-label">Regelmäßige Backups</span></div>
+      <div class="rc-check" data-val="mfa"><div class="rc-check-box"></div><span class="rc-check-label">Zwei-Faktor-Authentifizierung</span></div>
+      <div class="rc-check" data-val="training"><div class="rc-check-box"></div><span class="rc-check-label">Mitarbeiterschulungen</span></div>
+      <div class="rc-check" data-val="pentest"><div class="rc-check-box"></div><span class="rc-check-label">Penetrationstest / Audit</span></div>
+      <div class="rc-check" data-val="policy"><div class="rc-check-box"></div><span class="rc-check-label">IT-Sicherheitsrichtlinien vorhanden</span></div>
+      <div class="rc-check" data-val="incident"><div class="rc-check-box"></div><span class="rc-check-label">Notfallplan / Incident Response</span></div>
+    </div>
+  </div>
+
+  <div class="rc-step">
+    <div class="rc-step-title">Zusätzlicher Kontext</div>
+    <div class="rc-checks" id="context-checks">
+      <div class="rc-check" data-val="nis2"><div class="rc-check-box"></div><span class="rc-check-label">NIS2-pflichtig (50+ MA oder €10M+)</span></div>
+      <div class="rc-check" data-val="cloud"><div class="rc-check-box"></div><span class="rc-check-label">Nutzt Cloud-Dienste (AWS, Azure, Google)</span></div>
+      <div class="rc-check" data-val="remote"><div class="rc-check-box"></div><span class="rc-check-label">Mitarbeiter im Homeoffice / Remote</span></div>
+      <div class="rc-check" data-val="thirdparty"><div class="rc-check-box"></div><span class="rc-check-label">Externe Dienstleister / APIs</span></div>
+      <div class="rc-check" data-val="oldsoft"><div class="rc-check-box"></div><span class="rc-check-label">Veraltete Software / alte Windows-Version</span></div>
+      <div class="rc-check" data-val="prevattack"><div class="rc-check-box"></div><span class="rc-check-label">Hatte bereits einen Sicherheitsvorfall</span></div>
+    </div>
+  </div>
+
+  <button class="rc-btn" onclick="calculate()">Risiken berechnen →</button>
+  <div id="results" class="rc-results hidden"></div>
+</div>
+
+<script>
+document.querySelectorAll('.rc-check').forEach(el=>el.addEventListener('click',()=>el.classList.toggle('on')));
+
+function fmt(n){
+  if(n>=1000000)return(n/1000000).toFixed(1).replace('.',',')+' Mio. €';
+  if(n>=1000)return Math.round(n/1000).toLocaleString('de-DE')+' Tsd. €';
+  return Math.round(n).toLocaleString('de-DE')+' €';
+}
+
+const INDUSTRY_DATA={
+  fintech:{mult:2.2,name:'Fintech / Banking',threats:['Kontenangriffe','API-Exploits','Insider-Betrug','Regulatorische Strafen'],compliance:['PCI DSS','DORA','ISO 27001','DSGVO'],niche:'Finanzdaten sind das wertvollste Ziel für Cyberkriminelle.'},
+  insurance:{mult:2.0,name:'Versicherungen',threats:['Datenlecks Kundendaten','Ransomware','BEC-Betrug','Regulatorische Prüfungen'],compliance:['DORA','DSGVO','ISO 27001','Solvency II'],niche:'Versicherungsdaten ermöglichen gezielten Identitätsdiebstahl.'},
+  lawfirm:{mult:2.3,name:'Anwaltskanzlei',threats:['Mandantendaten-Diebstahl','E-Mail-Kompromittierung (BEC)','Erpressung mit Falldaten','Spionage'],compliance:['DSGVO','BRAO §43e','beA-Sicherheit','ISO 27001'],niche:'Anwälte unterliegen besonderer Verschwiegenheitspflicht — ein Datenleck kann die Zulassung gefährden.'},
+  accounting:{mult:1.9,name:'Steuerberatung',threats:['Finanzdaten-Diebstahl','Phishing auf Mandanten','Ransomware','Steuerbetrug'],compliance:['DSGVO','StBerG','GoBD','DATEV-Sicherheit'],niche:'Steuerberater verarbeiten hochsensible Finanz- und Personaldaten ganzer Unternehmen.'},
+  healthcare:{mult:2.5,name:'Arztpraxis / Klinik',threats:['Patientendaten-Diebstahl','Ransomware auf Praxissysteme','ePA-Angriffe','Gerätekompromittierung'],compliance:['DSGVO','KDG','BSI-Empfehlungen','ISO 27001','TI-Sicherheit'],niche:'Patientendaten erzielen auf dem Darknet bis zu 10× mehr als Kreditkartendaten.'},
+  pharmacy:{mult:2.1,name:'Apotheke',threats:['Rezeptdaten-Diebstahl','POS-Angriffe','E-Rezept-Manipulation','Lieferkettenangriffe'],compliance:['DSGVO','ABDA-Richtlinien','eRezept-Sicherheit'],niche:'E-Rezept-Einführung macht Apotheken zu attraktiven Angriffszielen.'},
+  dental:{mult:2.0,name:'Zahnarztpraxis',threats:['Patientendaten','Ransomware','Phishing','Praxissoftware-Exploits'],compliance:['DSGVO','KDG','BSI IT-Grundschutz'],niche:'Kleine Praxen ohne IT-Abteilung sind bevorzugte Ransomware-Ziele.'},
+  ngo:{mult:1.5,name:'NGO / Soziale Einrichtung',threats:['Spionage','Hacktivismus','Phishing auf Mitarbeiter','Datenlecks Spendengelder'],compliance:['DSGVO','Gemeinnützigkeitsrecht'],niche:'NGOs sind oft schlecht gesichert und politisch motivierten Angriffen ausgesetzt.'},
+  saas:{mult:1.8,name:'SaaS / IT-Produkt',threats:['API-Schwachstellen','Supply-Chain-Angriffe','Datenlecks','DDoS'],compliance:['ISO 27001','SOC 2','DSGVO','NIS2'],niche:'Ein einziger Sicherheitsvorfall kann tausende Endkunden betreffen.'},
+  outsourcing:{mult:1.7,name:'IT-Outsourcing / MSP',threats:['Supply-Chain-Angriffe','Privileged-Access-Missbrauch','Ransomware-Verteilung','Kundendaten-Exposition'],compliance:['ISO 27001','SOC 2','NIS2','DSGVO'],niche:'MSPs sind Hauptziel für Angreifer, die über einen Dienstleister viele Kunden erreichen wollen.'},
+  agency:{mult:1.5,name:'Digitalagentur',threats:['Kundendaten-Diebstahl','Website-Defacement','Zugangsdaten-Diebstahl','Cryptojacking'],compliance:['DSGVO','ISO 27001'],niche:'Agenturen verwalten Zugänge zu Dutzenden Kunden-Plattformen.'},
+  ecommerce:{mult:1.8,name:'E-Commerce',threats:['Skimming / Magecart','Kontobetrug','DDoS auf Shop','Fake-Bewertungen'],compliance:['PCI DSS','DSGVO','PSD2'],niche:'Checkout-Seiten sind ein Hauptziel für Kreditkartendaten-Diebstahl.'},
+  manufacturing:{mult:1.4,name:'Produktion / Industrie',threats:['OT/SCADA-Angriffe','Ransomware auf Produktion','Industriespionage','Lieferkettenangriffe'],compliance:['NIS2 (KRITIS)','ISO 27001','IEC 62443'],niche:'Ein Stillstand der Produktion kostet täglich Hunderttausende Euro.'},
+  retail:{mult:1.5,name:'Einzelhandel',threats:['POS-Angriffe','Kundendaten-Diebstahl','Ransomware','Phishing auf Personal'],compliance:['PCI DSS','DSGVO'],niche:'Filialketten mit zentralen Kassensystemen sind anfällig für flächendeckende Angriffe.'},
+  logistics:{mult:1.6,name:'Logistik / Transport',threats:['GPS-Manipulation','Frachtdaten-Diebstahl','Ransomware','Lieferketten-Kompromittierung'],compliance:['NIS2','DSGVO','ISO 27001'],niche:'Logistikunterbrechungen haben direkte wirtschaftliche Folgen für die gesamte Lieferkette.'},
+  realestate:{mult:1.6,name:'Immobilien',threats:['BEC-Betrug (Überweisungen)','Kundendaten-Diebstahl','Phishing','Vertragsmanipulation'],compliance:['DSGVO','GwG'],niche:'Immobilientransaktionen mit großen Summen sind ein Hauptziel für BEC-Betrug.'},
+  education:{mult:1.4,name:'Bildung / Weiterbildung',threats:['Schülerdaten-Diebstahl','Ransomware','Phishing auf Schüler','DDoS'],compliance:['DSGVO','KDG','Landesdatenschutzrecht'],niche:'Bildungseinrichtungen speichern sensitive Daten von Minderjährigen.'},
+  media:{mult:1.6,name:'Medien / Journalismus',threats:['Quellenschutz-Angriffe','Hacktivismus','Desinformation','DDoS'],compliance:['DSGVO','Presserecht'],niche:'Medienunternehmen sind Ziel staatlicher Akteure und politisch motivierter Angreifer.'},
+  other:{mult:1.3,name:'Sonstiges',threats:['Phishing','Ransomware','Datenlecks','Kontobetrug'],compliance:['DSGVO','ISO 27001'],niche:'Jedes Unternehmen ist ein potenzielles Ziel — unabhängig von der Branche.'},
+};
+
+const CONTEXT_MULT={nis2:0.15,cloud:0.12,remote:0.10,thirdparty:0.10,oldsoft:0.20,prevattack:0.25};
+
+function calculate(){
+  const company=document.getElementById('company').value.trim()||'Ihr Unternehmen';
+  const industry=document.getElementById('industry').value;
+  const employees=parseInt(document.getElementById('employees').value);
+  const revenue=parseFloat(document.getElementById('revenue').value)*1000||500000;
+  const dataChecked=[...document.querySelectorAll('#data-checks .rc-check.on')].map(e=>e.dataset.val);
+  const secChecked=[...document.querySelectorAll('#security-checks .rc-check.on')].map(e=>e.dataset.val);
+  const ctxChecked=[...document.querySelectorAll('#context-checks .rc-check.on')].map(e=>e.dataset.val);
+  const secScore=secChecked.length;
+  const idata=INDUSTRY_DATA[industry]||INDUSTRY_DATA.other;
+  const dataRisk={customer:80000,payment:130000,health:210000,ip:100000,employee:50000,financial:80000,legal:150000,personal:60000};
+  const dataLoss=dataChecked.reduce((s,k)=>s+(dataRisk[k]||0),0);
+  const secFactor=1+Math.max(0,(8-secScore)*0.15);
+  const ctxBonus=ctxChecked.reduce((s,k)=>s+(CONTEXT_MULT[k]||0),0);
+  const ctxFactor=1+ctxBonus;
+  const base=Math.max(50000,revenue*0.12);
+  const downtime=employees*1400*(secScore<4?5:3);
+  const regulatory=dataChecked.includes('health')?150000:dataChecked.includes('payment')?80000:dataChecked.includes('legal')?120000:20000;
+  const reputation=revenue*(0.08+(8-secScore)*0.012);
+  const incident=(base+dataLoss)*idata.mult*secFactor*ctxFactor;
+  const total=Math.round(incident+downtime+regulatory+reputation);
+  const breachProb=Math.min(95,35+(8-secScore)*8+dataChecked.length*3+ctxChecked.length*4);
+  const recoveryDays=secScore<3?60:secScore<5?30:secScore<7?14:7;
+  const yearlyRisk=Math.round(total*(breachProb/100));
+  const rcClass=recoveryDays>30?'high':recoveryDays>14?'med':'low';
+  const secScore100=Math.round((secScore/8)*100);
+  const ALL_RECS={
+    critical:[
+      {cond:!secChecked.includes('backup'),title:'Sofort: Backup-System einrichten',desc:'Täglich automatisierte Backups — lokal UND Cloud. Bei Ransomware ohne Backup droht Totalverlust.',tool:'Empfehlung: Veeam / Acronis'},
+      {cond:!secChecked.includes('mfa'),title:'Sofort: 2FA überall aktivieren',desc:'Über 80% der Angriffe nutzen gestohlene Passwörter. MFA blockiert diese Angriffe zuverlässig.',tool:'Empfehlung: Microsoft Authenticator / Duo'},
+      {cond:!secChecked.includes('antivirus'),title:'Sofort: EDR-Lösung installieren',desc:'Antivirensoftware reicht nicht mehr. Ein modernes EDR-System erkennt auch unbekannte Angriffe.',tool:'Empfehlung: Microsoft Defender for Business / Bitdefender GravityZone'},
+      {cond:ctxChecked.includes('oldsoft'),title:'Kritisch: Veraltete Software updaten',desc:'Windows 7/8 und alte Software haben keine Sicherheitsupdates mehr. Jede Lücke ist offen.',tool:'Empfehlung: Sofortiger Migrationsplan'},
+      {cond:ctxChecked.includes('prevattack'),title:'Kritisch: Vollständigen Security-Audit durchführen',desc:'Nach einem Vorfall bestehen oft versteckte Hintertüren. Professioneller Audit ist unerlässlich.',tool:'CybTerra Essentials-Audit — ideal für diesen Fall'},
+    ],
+    important:[
+      {cond:!secChecked.includes('firewall'),title:'Firewall richtig konfigurieren',desc:'Eine unkonfigurierte Firewall bietet kaum Schutz. Professionelle Einrichtung mit Regelwerk ist entscheidend.',tool:'Empfehlung: Fortinet / Sophos XGS'},
+      {cond:!secChecked.includes('incident'),title:'Notfallplan erstellen',desc:'Wer im Ernstfall nicht weiß, was zu tun ist, verliert wertvolle Stunden. BSI schreibt 24h-Meldepflicht vor.',tool:'CybTerra erstellt Incident-Response-Plan'},
+      {cond:!secChecked.includes('policy'),title:'IT-Sicherheitsrichtlinien einführen',desc:'Ohne klare Regeln für Passwörter, BYOD und Datenzugriff ist jeder Mitarbeiter ein Risikofaktor.',tool:'CybTerra liefert dokumentierte Richtlinien'},
+      {cond:ctxChecked.includes('remote'),title:'Remote-Arbeit absichern',desc:'Homeoffice ohne VPN und sichere Endpunkte öffnet direkte Angriffsflächen. Zero-Trust-Ansatz empfohlen.',tool:'Empfehlung: Cloudflare Zero Trust (bis 50 User kostenlos)'},
+      {cond:ctxChecked.includes('cloud'),title:'Cloud-Konfiguration prüfen',desc:'Fehlkonfigurierte Cloud-Umgebungen sind für über 30% aller Datenlecks verantwortlich.',tool:'CybTerra Cloud Security Review'},
+      {cond:ctxChecked.includes('thirdparty'),title:'Drittanbieter-Sicherheit prüfen',desc:'Supply-Chain-Angriffe via APIs und Dienstleister nehmen stark zu (SolarWinds, MOVEit).',tool:'Vendor Risk Assessment durch CybTerra'},
+    ],
+    recommended:[
+      {cond:!secChecked.includes('training'),title:'Mitarbeiterschulung durchführen',desc:'Phishing verursacht 80% aller Vorfälle. Regelmäßige Simulationen reduzieren das Risiko um bis zu 70%.',tool:'Empfehlung: KnowBe4 / Usecure'},
+      {cond:!secChecked.includes('pentest'),title:'Penetrationstest beauftragen',desc:'Nur ein externer Test zeigt, was Angreifer wirklich sehen. Einmal jährlich empfohlen.',tool:'CybTerra Penetrationstest (Custom-Paket)'},
+      {cond:ctxChecked.includes('nis2'),title:'NIS2-Compliance sicherstellen',desc:'Bis März 2026 müssen betroffene Unternehmen beim BSI registriert sein. Strafen bis €10M.',tool:'CybTerra Shield-Paket — NIS2-ready'},
+      {cond:dataChecked.includes('health'),title:'Patientendaten nach KDG schützen',desc:'Gesundheitsdaten sind besonders schützenswert. Verstöße kosten bis zu €20M Strafe.',tool:'CybTerra Fortress — speziell für Gesundheitswesen'},
+      {cond:dataChecked.includes('legal'),title:'Mandantendaten besonders sichern',desc:'Anwaltliche Verschwiegenheit gilt auch digital. beA-Sicherheit und E2E-Verschlüsselung sind Pflicht.',tool:'CybTerra Audit für Kanzleien'},
+      {cond:dataChecked.includes('payment'),title:'PCI DSS Compliance prüfen',desc:'Kreditkartendaten unterliegen strengen PCI-DSS-Regeln. Verstöße können Händlerlizenzen kosten.',tool:'CybTerra Custom — PCI DSS Assessment'},
+    ]
+  };
+  const critical=ALL_RECS.critical.filter(r=>r.cond).slice(0,3);
+  const important=ALL_RECS.important.filter(r=>r.cond).slice(0,3);
+  const recommended=ALL_RECS.recommended.filter(r=>r.cond).slice(0,2);
+  const items=[
+    {label:'Schadensbehebung & Forensik',val:Math.round(incident)},
+    {label:'Betriebsausfall & Produktivität',val:Math.round(downtime)},
+    {label:'Reputationsschäden',val:Math.round(reputation)},
+    {label:'Bußgelder & DSGVO-Strafen',val:Math.round(regulatory)},
+  ];
+  const dateStr=new Date().toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('results').innerHTML=`
+    <div class="rc-results-head">
+      <div class="rc-results-title">Risikoanalyse: ${company}</div>
+      <div class="rc-results-company">${idata.name} · ${dateStr}</div>
+    </div>
+    <div class="rc-results-body">
+      <div style="background:#FFF9F0;border:0.5px solid #FAC775;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.25rem;font-size:13px;color:#633806;">
+        <strong style="display:block;font-weight:500;color:#412402;margin-bottom:2px;">Branchenhinweis für ${idata.name}</strong>${idata.niche}
+      </div>
+      <div class="rc-total">
+        <div class="rc-total-num">${fmt(total)}</div>
+        <div class="rc-total-label">potenzielle Verluste<br>durch einen einzigen Vorfall</div>
+      </div>
+      <div class="rc-section">
+        <div class="rc-section-title">Kostenverteilung</div>
+        <div class="rc-items">${items.map(i=>`<div class="rc-item"><div class="rc-item-label">${i.label}</div><div class="rc-item-bar-wrap"><div class="rc-item-bar" style="width:${Math.round(i.val/total*100)}%"></div></div><div class="rc-item-val">${fmt(i.val)}</div></div>`).join('')}</div>
+      </div>
+      <div class="rc-section">
+        <div class="rc-section-title">Sicherheitsbewertung</div>
+        <div class="rc-score-bar">
+          <div class="rc-score-label"><span>Aktueller Schutzgrad</span><span style="font-weight:500;color:${secScore100<40?'#E24B4A':secScore100<70?'#F5A623':'#1D9E75'}">${secScore100}%</span></div>
+          <div class="rc-score-track"><div class="rc-score-fill" style="width:${secScore100}%;background:${secScore100<40?'#E24B4A':secScore100<70?'#F5A623':'#1D9E75'}"></div></div>
+        </div>
+      </div>
+      <div class="rc-risk-row">
+        <div class="rc-risk high"><div class="rc-risk-label">Angriffswahrscheinlichkeit</div><div class="rc-risk-val">${breachProb}%</div><div class="rc-risk-desc">innerhalb von 12 Monaten</div></div>
+        <div class="rc-risk med"><div class="rc-risk-label">Erwarteter Jahresschaden</div><div class="rc-risk-val">${fmt(yearlyRisk)}</div><div class="rc-risk-desc">statistisch gewichteter Wert</div></div>
+        <div class="rc-risk ${rcClass}"><div class="rc-risk-label">Wiederherstellung</div><div class="rc-risk-val">${recoveryDays}+ Tage</div><div class="rc-risk-desc">bis zur Betriebsnormalisierung</div></div>
+      </div>
+      <div class="rc-section">
+        <div class="rc-section-title">Typische Bedrohungen für ${idata.name}</div>
+        <div class="rc-threat-list">${idata.threats.map((t,i)=>{const probs=['hoch','hoch','mittel','mittel'];const cls=['prob-high','prob-high','prob-med','prob-med'];return`<div class="rc-threat-row"><span class="rc-threat-name">${t}</span><span class="rc-threat-prob ${cls[i]||'prob-med'}">${probs[i]||'mittel'}</span></div>`;}).join('')}</div>
+      </div>
+      ${(critical.length+important.length+recommended.length)>0?`
+      <div class="rc-section">
+        <div class="rc-section-title">Personalisierte Handlungsempfehlungen</div>
+        <div class="rc-recs-grid">
+          ${critical.map(r=>`<div class="rc-rec-card critical"><div class="rc-rec-priority">🔴 Sofortmaßnahme</div><div class="rc-rec-title">${r.title}</div><div class="rc-rec-desc">${r.desc}</div><div class="rc-rec-tool">${r.tool}</div></div>`).join('')}
+          ${important.map(r=>`<div class="rc-rec-card important"><div class="rc-rec-priority">🟡 Wichtig</div><div class="rc-rec-title">${r.title}</div><div class="rc-rec-desc">${r.desc}</div><div class="rc-rec-tool">${r.tool}</div></div>`).join('')}
+          ${recommended.map(r=>`<div class="rc-rec-card recommended"><div class="rc-rec-priority">🟢 Empfohlen</div><div class="rc-rec-title">${r.title}</div><div class="rc-rec-desc">${r.desc}</div><div class="rc-rec-tool">${r.tool}</div></div>`).join('')}
+        </div>
+      </div>`:''}
+      <div class="rc-section">
+        <div class="rc-section-title">Relevante Compliance-Anforderungen</div>
+        <div class="rc-compliance">${idata.compliance.map((c,i)=>`<span class="rc-comp-tag ${i<2?'comp-required':i<3?'comp-recommended':'comp-optional'}">${i<2?'⚠️ Pflicht: ':''}${c}</span>`).join('')}</div>
+      </div>
+      <div class="rc-cta">
+        <div class="rc-cta-text">Schutz kostet 10–50× weniger als ein Vorfall.<small>Kostenlose 30-Min-Beratung — wir zeigen konkrete nächste Schritte für ${company}.</small></div>
+        <a class="rc-cta-link" href="https://cybterra.com" target="_blank">Beratung anfordern →</a>
+      </div>
+    </div>`;
+  document.getElementById('results').classList.remove('hidden');
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
