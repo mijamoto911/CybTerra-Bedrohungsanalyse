@@ -1,0 +1,2180 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cybterra · Security-Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #efede8;
+        --card: #fff;
+        --ink: #2a1512;
+        --brand: #340b09;
+        --bsoft: #f2e7e5;
+        --mut: #6e6560;
+        --dim: #a79e99;
+        --line: #e6e1d9;
+        --line2: #d8d0c6;
+        --green: #3e8e5a;
+        --gsoft: #e9f1ea;
+        --amber: #b8841f;
+        --asoft: #f6edd8;
+        --red: #c24039;
+        --rsoft: #f6e6e3;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: 'DM Sans', system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 840px;
+        margin: 0 auto;
+        padding: 30px 22px 80px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin-bottom: 22px;
+      }
+      .wm {
+        font-family: 'Poppins';
+        font-weight: 700;
+        font-size: 26px;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+      .bt {
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--dim);
+        margin-top: 1px;
+      }
+      .back {
+        background: none;
+        border: none;
+        color: var(--mut);
+        font-family: 'DM Sans';
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        padding: 0;
+        margin-bottom: 18px;
+      }
+      .back:hover {
+        color: var(--brand);
+      }
+      .eye {
+        font-weight: 600;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--brand);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .eye::before {
+        content: '';
+        width: 24px;
+        height: 2px;
+        background: var(--brand);
+      }
+      h1.h {
+        font-family: Roboto, roboto-bold, sans-serif;
+        font-weight: 700;
+        font-size: clamp(28px, 5vw, 40px);
+        line-height: 1.07;
+        letter-spacing: -0.02em;
+        margin: 0 0 14px;
+      }
+      h1.h em {
+        font-style: normal;
+        color: var(--brand);
+      }
+      .lead {
+        color: var(--mut);
+        font-size: 16px;
+        line-height: 1.6;
+        max-width: 620px;
+        margin: 0 0 30px;
+      }
+      .choose {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .tile {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 26px;
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
+        transition: 0.16s;
+        box-shadow: 0 2px 12px rgba(42, 21, 18, 0.04);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .tile:hover {
+        border-color: var(--brand);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 26px rgba(52, 11, 9, 0.1);
+      }
+      .tile-ic {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: var(--bsoft);
+        display: grid;
+        place-items: center;
+        color: var(--brand);
+        font-size: 22px;
+      }
+      .tile h3 {
+        font-family: 'Poppins';
+        font-weight: 700;
+        font-size: 19px;
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+      .tile p {
+        color: var(--mut);
+        font-size: 14px;
+        line-height: 1.55;
+        margin: 0;
+        flex: 1;
+      }
+      .tile .go {
+        color: var(--brand);
+        font-weight: 600;
+        font-size: 13.5px;
+      }
+      .tile .tag {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 12px rgba(42, 21, 18, 0.04);
+      }
+      .card h3 {
+        font-family: 'Poppins';
+        font-weight: 600;
+        font-size: 16px;
+        margin: 0 0 4px;
+        display: flex;
+        gap: 9px;
+        align-items: center;
+      }
+      .card .sub {
+        color: var(--mut);
+        font-size: 13.5px;
+        margin: 0 0 16px;
+      }
+      .fg {
+        display: grid;
+        gap: 12px;
+      }
+      .row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .field label {
+        display: block;
+        font-weight: 600;
+        font-size: 10px;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--dim);
+        margin-bottom: 6px;
+      }
+      .inp,
+      .sel {
+        width: 100%;
+        background: var(--paper);
+        border: 1px solid var(--line2);
+        border-radius: 9px;
+        padding: 12px 13px;
+        color: var(--ink);
+        font-family: inherit;
+        font-size: 14px;
+      }
+      .inp:focus,
+      .sel:focus {
+        outline: none;
+        border-color: var(--brand);
+      }
+      .btn {
+        border: none;
+        cursor: pointer;
+        font-family: 'Poppins';
+        font-weight: 600;
+        font-size: 14.5px;
+        padding: 13px 24px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        transition: 0.14s;
+      }
+      .btn-p {
+        background: var(--brand);
+        color: var(--paper);
+      }
+      .btn-p:hover {
+        background: #210706;
+        transform: translateY(-1px);
+      }
+      .btn-p:disabled {
+        opacity: 0.36;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .btn-g {
+        background: var(--card);
+        border: 1px solid var(--line2);
+        color: var(--mut);
+      }
+      .btn-g:hover {
+        color: var(--ink);
+        border-color: var(--dim);
+      }
+      .meta {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: var(--dim);
+        margin-top: 14px;
+      }
+      .meta span {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .meta i {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--brand);
+        display: inline-block;
+      }
+      .opts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .optslist {
+        display: grid;
+        gap: 8px;
+      }
+      .opt {
+        cursor: pointer;
+        border: 1.5px solid var(--line2);
+        background: var(--paper);
+        border-radius: 9px;
+        padding: 12px 14px;
+        font-family: inherit;
+        font-size: 14px;
+        color: var(--mut);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: 0.12s;
+        text-align: left;
+      }
+      .opt:hover {
+        border-color: var(--dim);
+      }
+      .opt.on {
+        font-weight: 600;
+        background: #fff;
+      }
+      .opt .d {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid currentColor;
+        flex: none;
+      }
+      .opt.on .d {
+        background: currentColor;
+        box-shadow: inset 0 0 0 2px #fff;
+      }
+      .seg {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+      }
+      .pbar {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: var(--paper);
+        padding: 12px 0 14px;
+        margin-bottom: 6px;
+      }
+      .ptop {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 8px;
+      }
+      .ptop b {
+        font-family: 'Poppins';
+        font-size: 13.5px;
+      }
+      .ptop span {
+        font-size: 11px;
+        color: var(--dim);
+      }
+      .ptrack {
+        height: 5px;
+        background: var(--line);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .pfill {
+        height: 100%;
+        background: var(--brand);
+        border-radius: 4px;
+        transition: width 0.4s;
+      }
+      .dots {
+        display: flex;
+        gap: 4px;
+        margin-top: 10px;
+      }
+      .dot {
+        flex: 1;
+        height: 4px;
+        border-radius: 3px;
+        background: var(--line);
+        cursor: pointer;
+      }
+      .dot.done {
+        background: var(--brand);
+      }
+      .dot.cur {
+        background: var(--ink);
+      }
+      .secn {
+        font-weight: 600;
+        font-size: 11.5px;
+        color: var(--brand);
+        letter-spacing: 0.09em;
+      }
+      .sect {
+        font-family: 'Poppins';
+        font-weight: 700;
+        font-size: 25px;
+        letter-spacing: -0.01em;
+        margin: 5px 0 5px;
+      }
+      .seci {
+        color: var(--mut);
+        font-size: 15px;
+      }
+      .q {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 19px 20px;
+        margin-bottom: 11px;
+        box-shadow: 0 1px 7px rgba(42, 21, 18, 0.03);
+      }
+      .qnum {
+        font-size: 11px;
+        color: var(--dim);
+        font-weight: 600;
+      }
+      .qt {
+        font-size: 15.5px;
+        line-height: 1.5;
+        margin: 6px 0 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .info {
+        flex: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1.5px solid var(--dim);
+        color: var(--dim);
+        font-size: 11px;
+        font-weight: 700;
+        font-style: italic;
+        font-family: Georgia, serif;
+        display: inline-grid;
+        place-items: center;
+        cursor: help;
+        position: relative;
+        margin-top: 2px;
+        transition: 0.15s;
+      }
+      .info:hover {
+        border-color: var(--brand);
+        color: var(--brand);
+      }
+      .info .tip {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        left: 50%;
+        top: 26px;
+        transform: translateX(-50%);
+        width: 260px;
+        max-width: 70vw;
+        background: var(--ink);
+        color: #f4eee9;
+        font-size: 12.5px;
+        font-weight: 400;
+        font-style: normal;
+        font-family: 'DM Sans';
+        line-height: 1.5;
+        text-align: left;
+        padding: 11px 13px;
+        border-radius: 9px;
+        box-shadow: 0 8px 24px rgba(42, 21, 18, 0.22);
+        z-index: 20;
+        transition: opacity 0.16s;
+        pointer-events: none;
+      }
+      .info .tip::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: -5px;
+        transform: translateX(-50%) rotate(45deg);
+        width: 9px;
+        height: 9px;
+        background: var(--ink);
+      }
+      .info:hover .tip,
+      .info:focus .tip {
+        visibility: visible;
+        opacity: 1;
+      }
+      @media print {
+        .info {
+          display: none;
+        }
+      }
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .verdict {
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        border: 1px solid;
+      }
+      .verdict .vt {
+        font-weight: 600;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .verdict .vh {
+        font-family: 'Poppins';
+        font-weight: 700;
+        font-size: 26px;
+        letter-spacing: -0.01em;
+        margin: 0 0 10px;
+      }
+      .verdict .vp {
+        font-size: 14.5px;
+        line-height: 1.6;
+        margin: 0;
+        opacity: 0.92;
+      }
+      .verdict .vfine {
+        margin-top: 14px;
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .conseq {
+        display: grid;
+        gap: 9px;
+        margin-top: 16px;
+      }
+      .ci {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        padding: 14px 16px;
+      }
+      .ci .k {
+        font-size: 10px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--dim);
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .ci .v {
+        font-size: 13.5px;
+        line-height: 1.5;
+      }
+      .obl {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-top: 4px;
+      }
+      .obl span {
+        font-size: 12px;
+        color: var(--mut);
+      }
+      .obl span::before {
+        content: '▸ ';
+        color: var(--brand);
+      }
+      .rhero {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 26px;
+        margin-bottom: 16px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 26px;
+        align-items: center;
+        box-shadow: 0 2px 14px rgba(42, 21, 18, 0.05);
+      }
+      .score .big {
+        font-family: 'Poppins';
+        font-weight: 700;
+        font-size: 50px;
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+      .score .lbl {
+        font-size: 10px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--dim);
+        margin-top: 6px;
+        font-weight: 600;
+      }
+      .rhero-txt h2 {
+        font-family: 'Poppins';
+        font-weight: 600;
+        font-size: 21px;
+        margin: 0 0 8px;
+      }
+      .rlvl {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        padding: 5px 12px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+      }
+      .rhero-txt p {
+        color: var(--mut);
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 0;
+      }
+      .chartgrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        align-items: center;
+      }
+      .bars {
+        display: grid;
+        gap: 9px;
+      }
+      .barrow {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 5px 12px;
+        align-items: center;
+      }
+      .bart {
+        font-size: 12.5px;
+      }
+      .bart small {
+        color: var(--dim);
+        margin-right: 6px;
+        font-weight: 600;
+      }
+      .barv {
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .bartrack {
+        grid-column: 1/-1;
+        height: 6px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .barfill {
+        height: 100%;
+        border-radius: 5px;
+      }
+      .mgmt {
+        font-size: 14.5px;
+        line-height: 1.7;
+        color: var(--mut);
+      }
+      .mgmt b {
+        color: var(--ink);
+      }
+      .strength {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12.5px;
+        color: var(--mut);
+        padding: 6px 11px;
+        background: var(--gsoft);
+        border-radius: 8px;
+        margin: 4px 6px 0 0;
+      }
+      .gap {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 15px 17px;
+        margin-bottom: 9px;
+        background: var(--card);
+      }
+      .gap-h {
+        display: flex;
+        gap: 11px;
+        align-items: flex-start;
+      }
+      .badge {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 4px 9px;
+        border-radius: 20px;
+        flex: none;
+        margin-top: 2px;
+      }
+      .gap-q {
+        font-weight: 600;
+        font-size: 14.5px;
+        line-height: 1.45;
+      }
+      .gap-sec {
+        font-size: 10.5px;
+        color: var(--dim);
+        margin-top: 3px;
+        font-weight: 500;
+      }
+      .gap-rec {
+        margin-top: 11px;
+        padding: 12px 14px;
+        background: var(--paper);
+        border-radius: 9px;
+        font-size: 13.5px;
+        line-height: 1.55;
+      }
+      .gap-rec b {
+        color: var(--brand);
+      }
+      .cta {
+        background: var(--brand);
+        border-radius: 18px;
+        padding: 26px;
+        color: var(--paper);
+        margin-top: 20px;
+      }
+      .cta h3 {
+        font-family: 'Poppins';
+        font-weight: 600;
+        font-size: 20px;
+        margin: 0 0 8px;
+        color: #fff;
+      }
+      .cta p {
+        color: #e3cfcc;
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 0 0 18px;
+      }
+      .cta .btn-p {
+        background: var(--paper);
+        color: var(--brand);
+      }
+      .cta .btn-p:hover {
+        background: #fff;
+      }
+      .cta .inp {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.25);
+        color: #fff;
+      }
+      .letter {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 18px 22px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        margin-bottom: 16px;
+      }
+      .letter .li {
+        flex: 1;
+      }
+      .letter .lc {
+        text-align: right;
+        font-size: 12px;
+        color: var(--mut);
+        line-height: 1.5;
+      }
+      .letter .lc b {
+        color: var(--brand);
+      }
+      .foot {
+        margin-top: 22px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--mut);
+      }
+      .foot b {
+        color: var(--brand);
+      }
+      .disc {
+        font-size: 10.5px;
+        color: var(--dim);
+        line-height: 1.7;
+        margin-top: 14px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-bottom: 14px;
+      }
+      @media (max-width: 640px) {
+        .choose,
+        .row2,
+        .opts,
+        .chartgrid,
+        .rhero,
+        .obl {
+          grid-template-columns: 1fr;
+        }
+        .rhero,
+        .letter {
+          text-align: center;
+        }
+        .letter .lc {
+          text-align: center;
+        }
+      }
+      @media print {
+        body {
+          background: #fff;
+        }
+        .toolbar,
+        .cta,
+        .nav,
+        .pbar,
+        .back {
+          display: none !important;
+        }
+        .card,
+        .rhero,
+        .gap,
+        .verdict,
+        .letter {
+          box-shadow: none;
+          break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      var CONTACT = { mail: 'office@cybterra.com', web: 'cybterra.com' };
+
+      /* ---- Kein Icon-Logo — nur Text-Wortmarke wie beim Impactrechner ---- */
+      function logo(sz) {
+        return '';
+      }
+      function brand(sub) {
+        return (
+          '<div class="brand"><div><div class="wm">cybterra' +
+          (sub ? ' · ' + sub : '') +
+          '</div></div></div>'
+        );
+      }
+      function letter() {
+        return (
+          '<div class="letter"><div class="li"><div class="wm">cybterra</div><div class="bt">Cyber-Security &amp; NIS2-Compliance</div></div><div class="lc"><b>cybterra</b><br>' +
+          CONTACT.mail +
+          '<br>' +
+          CONTACT.web +
+          '</div></div>'
+        );
+      }
+      function foot() {
+        return (
+          '<div class="foot"><div><b>cybterra</b> · Cyber-Security &amp; NIS2</div><div>' +
+          CONTACT.mail +
+          ' · ' +
+          CONTACT.web +
+          '</div></div>' +
+          '<p class="disc">Automatisierte Erstorientierung auf Basis Ihrer Selbstauskunft — ersetzt keine individuelle Sicherheitsprüfung oder Rechtsberatung. © cybterra · ' +
+          new Date().toLocaleDateString('de-DE') +
+          '.</p>'
+        );
+      }
+
+      /* ---- NIS2-Daten ---- */
+      var SEK_I = [
+        ['energie', 'Energie'],
+        ['transport', 'Transport & Verkehr'],
+        ['banken', 'Bankwesen'],
+        ['finanz', 'Finanzmarktinfrastruktur'],
+        ['gesundheit', 'Gesundheitswesen'],
+        ['trinkwasser', 'Trinkwasser'],
+        ['abwasser', 'Abwasser'],
+        ['diginfra', 'Digitale Infrastruktur (Cloud, RZ, DNS, TK)'],
+        ['iktm', 'Verwaltung von IKT-Diensten (B2B)'],
+        ['verwaltung', 'Öffentliche Verwaltung'],
+        ['weltraum', 'Weltraum'],
+      ];
+      var SEK_II = [
+        ['post', 'Post- & Kurierdienste'],
+        ['abfall', 'Abfallbewirtschaftung'],
+        ['chemie', 'Chemie'],
+        ['lebensmittel', 'Lebensmittel'],
+        ['produktion', 'Verarbeitendes Gewerbe / Herstellung'],
+        ['digdienste', 'Anbieter digitaler Dienste'],
+        ['forschung', 'Forschung'],
+      ];
+      var ANH_I = {};
+      SEK_I.forEach(function (s) {
+        ANH_I[s[0]] = 1;
+      });
+      var SPECIALS = [
+        ['kritis', 'KRITIS-Betreiber'],
+        ['tk', 'Öffentlicher TK-Anbieter'],
+        ['dns', 'DNS / TLD-Registry'],
+        ['vertrauen', 'Qualifizierter Vertrauensdiensteanbieter'],
+      ];
+
+      /* ---- Assessment-Daten ---- */
+      var BRANCHEN = [
+        ['', 'Bitte wählen…'],
+        ['produktion', 'Industrie / Produktion'],
+        ['gesundheit', 'Gesundheitswesen'],
+        ['it', 'IT / Software'],
+        ['handel', 'Handel / E-Commerce'],
+        ['finanzen', 'Finanzen / Versicherung'],
+        ['energie', 'Energie / Versorgung'],
+        ['logistik', 'Logistik / Transport'],
+        ['dienstleistung', 'Dienstleistung'],
+        ['oeffentlich', 'Öffentlicher Sektor'],
+        ['sonstige', 'Sonstige'],
+      ];
+      var OPTS = [
+        { v: 'ja', t: 'Ja', val: 2, c: '#3E8E5A' },
+        { v: 'teilweise', t: 'Teilweise', val: 1, c: '#B8841F' },
+        { v: 'nein', t: 'Nein', val: 0, c: '#C24039' },
+        { v: 'na', t: 'Keine Relevanz', val: null, c: '#A79E99' },
+      ];
+      var BASE = [
+        {
+          id: 's1',
+          n: '01',
+          short: 'Schwachstellen',
+          t: 'Sicherheitslücken & Patch-Management',
+          bsig: '§ 30 Abs. 2 Nr. 5 BSIG',
+          intro:
+            'Wie zuverlässig erkennen und schließen Sie bekannte Schwachstellen?',
+          q: [
+            {
+              id: '1.1',
+              q: 'Haben Sie einen vollständigen Überblick über alle eingesetzte Software?',
+              info: 'Gemeint ist eine aktuelle Liste aller Programme und Systeme im Unternehmen – inkl. Version und wer dafür zuständig ist. Nur was Sie kennen, können Sie schützen.',
+              rec: 'Zentrales Software- und Asset-Inventar mit Version und Verantwortlichem führen.',
+            },
+            {
+              id: '1.2',
+              q: 'Existiert ein definierter Prozess für Updates und Patches?',
+              info: 'Ein „Patch“ ist ein Sicherheitsupdate des Herstellers. Gefragt ist, ob es eine feste Vorgehensweise gibt, wer solche Updates wann einspielt – statt zufällig.',
+              rec: 'Patch-Prozess mit Zuständigkeiten, Testschritt und festen Wartungsfenstern dokumentieren.',
+            },
+            {
+              id: '1.3',
+              q: 'Werden Updates schnellstmöglich nach Veröffentlichung eingespielt?',
+              info: 'Sobald ein Hersteller ein Sicherheitsupdate veröffentlicht, kennen auch Angreifer die Lücke. Je schneller Sie einspielen, desto kleiner das Zeitfenster für Angriffe.',
+              rec: 'Kritische Updates binnen 72 h einspielen, idealerweise automatisiert und nach CVSS priorisiert.',
+            },
+            {
+              id: '1.4',
+              q: 'Sind Quellen definiert, über die Sie über neue Schwachstellen informiert werden?',
+              info: 'Erfahren Sie aktiv von neuen Sicherheitslücken? Z. B. über die Warnmeldungen des BSI (CERT-Bund) oder Hinweise Ihrer Software-Hersteller.',
+              rec: 'CERT-Bund-Meldungen des BSI und Hersteller-Advisories abonnieren, verantwortliche Rolle benennen.',
+            },
+            {
+              id: '1.5',
+              q: 'Sind administrative Rechte auf das Nötigste beschränkt?',
+              info: '„Admin-Rechte“ erlauben, alles auf einem System zu ändern. Wenn jeder Nutzer sie hat, kann ein gekapertes Konto großen Schaden anrichten. Least Privilege = nur so viel Rechte wie nötig.',
+              rec: 'Lokale Admin-Rechte konsequent reduzieren (Least Privilege).',
+            },
+          ],
+        },
+        {
+          id: 's2',
+          n: '02',
+          short: 'Zugänge',
+          t: 'Benutzerzugänge absichern',
+          bsig: '§ 30 Abs. 2 Nr. 9/10 BSIG',
+          intro: 'Wie gut sind Konten, Passwörter und Fernzugriffe geschützt?',
+          q: [
+            {
+              id: '2.1',
+              q: 'Nutzen Sie eine Passwort-Richtlinie gemäß BSI-Empfehlung?',
+              rec: 'Mindestlänge 12+, Passwort-Manager, keine erzwungenen periodischen Wechsel.',
+            },
+            {
+              id: '2.2',
+              q: 'Sind kritische Konten und Fernzugänge mit MFA / 2FA abgesichert?',
+              rec: 'MFA verpflichtend für Admins, Fernzugriffe und Cloud; FIDO2/Passkeys bevorzugen.',
+            },
+            {
+              id: '2.3',
+              q: 'Sind Mitarbeitende sensibilisiert, Passwörter geheim zu halten?',
+              rec: 'In Onboarding und jährlicher Schulung verankern: keine Weitergabe, keine Mehrfachnutzung.',
+            },
+            {
+              id: '2.4',
+              q: 'Existiert eine Zugangssicherung für mobile Geräte im Firmennetz?',
+              rec: 'MDM mit Verschlüsselung, Bildschirmsperre und Remote-Wipe einführen.',
+            },
+            {
+              id: '2.5',
+              q: 'Werden privilegierte Zugänge gesondert verwaltet und überwacht?',
+              rec: 'Privileged-Access-Management: separate Admin-Konten, Just-in-Time-Rechte, Protokollierung.',
+            },
+          ],
+        },
+        {
+          id: 's3',
+          n: '03',
+          short: 'Backup',
+          t: 'Datensicherung & Wiederherstellung',
+          bsig: '§ 30 Abs. 2 Nr. 3 BSIG',
+          intro: 'Sind Ihre Daten gegen Verlust und Ransomware geschützt?',
+          q: [
+            {
+              id: '3.1',
+              q: 'Verfügen Sie über eine Sicherung der geschäftskritischen Daten?',
+              rec: 'Geschäftskritische Daten identifizieren und systematisch sichern.',
+            },
+            {
+              id: '3.2',
+              q: 'Werden Backups auf mehreren unterschiedlichen Medien gesichert?',
+              rec: '3-2-1-Regel: drei Kopien, zwei Medien, eine außer Haus.',
+            },
+            {
+              id: '3.3',
+              q: 'Ist mindestens ein Backup offline / unveränderbar (immutable)?',
+              rec: 'Offline- oder Immutable-Kopie vorhalten — Ransomware verschlüsselt Online-Backups mit.',
+            },
+            {
+              id: '3.4',
+              q: 'Werden Wiederherstellung und Funktionsfähigkeit regelmäßig geübt?',
+              rec: 'Wiederherstellung mind. halbjährlich testen und Recovery-Zeiten dokumentieren.',
+            },
+            {
+              id: '3.5',
+              q: 'Ist der Sicherungsturnus an die Geschäftskritikalität angepasst?',
+              rec: 'Sicherungshäufigkeit am tolerierbaren Datenverlust (RPO) ausrichten.',
+            },
+          ],
+        },
+        {
+          id: 's4',
+          n: '04',
+          short: 'Bewusstsein',
+          t: 'Gefahrenbewusstsein & Schulung',
+          bsig: '§ 30 Abs. 2 Nr. 7 BSIG',
+          intro: 'Sind Sie und Ihr Team auf aktuelle Angriffe vorbereitet?',
+          q: [
+            {
+              id: '4.1',
+              q: 'Werden Sie zeitnah über aktuelle Gefahren informiert?',
+              rec: 'BSI-Lagebild und Branchen-CERT-Informationen nutzen, um gezielt zu priorisieren.',
+            },
+            {
+              id: '4.2',
+              q: 'Sind gängige Vorgehensweisen von Cyberkriminellen bekannt?',
+              rec: 'Muster vermitteln: Phishing, CEO-Fraud, Ransomware, Lieferketten-Angriffe.',
+            },
+            {
+              id: '4.3',
+              q: 'Finden regelmäßig Schulungen statt?',
+              rec: 'Mindestens jährliche Awareness-Schulungen durchführen und dokumentieren.',
+            },
+            {
+              id: '4.4',
+              q: 'Werden simulierte Phishing-Kampagnen durchgeführt?',
+              rec: 'Phishing-Simulationen einsetzen; Klickraten zeigen den Fortschritt.',
+            },
+            {
+              id: '4.5',
+              q: 'Gibt es eine niedrigschwellige Meldemöglichkeit für Verdachtsfälle?',
+              rec: 'Einfachen Melde-Weg schaffen — schnelle Meldungen verhindern größere Schäden.',
+            },
+          ],
+        },
+        {
+          id: 's5',
+          n: '05',
+          short: 'Netzwerk',
+          t: 'Netzübergänge & Netzwerksicherheit',
+          bsig: '§ 30 Abs. 2 Nr. 1 BSIG',
+          intro:
+            'Wie kontrolliert ist der Übergang zwischen Ihrem Netz und dem Internet?',
+          q: [
+            {
+              id: '5.1',
+              q: 'Verfügen Sie über eine dedizierte, restriktiv konfigurierte Firewall?',
+              rec: 'Next-Generation-Firewall mit Default-Deny; Regelwerk dokumentieren.',
+            },
+            {
+              id: '5.2',
+              q: 'Sind kritische IT-Systeme vom restlichen Netz getrennt?',
+              rec: 'Netz segmentieren (VLANs/Zonen); Alt- und Produktionssysteme trennen.',
+            },
+            {
+              id: '5.3',
+              q: 'Erfolgen externe Zugriffe nur über gesicherte Zugänge (VPN/ZTNA)?',
+              rec: 'Kein direkter RDP aus dem Internet; VPN mit MFA oder Zero-Trust-Access.',
+            },
+            {
+              id: '5.4',
+              q: 'Gibt es eine Übersicht aller externen Zugänge inkl. Berechtigungen?',
+              rec: 'Register aller Fernzugänge führen und regelmäßig rezertifizieren.',
+            },
+            {
+              id: '5.5',
+              q: 'Ist Ihr WLAN sicher konfiguriert (Trennung Gast/Firma)?',
+              rec: 'Gäste-WLAN trennen, WPA3 und starke Schlüssel verwenden.',
+            },
+          ],
+        },
+        {
+          id: 's6',
+          n: '06',
+          short: 'Malware',
+          t: 'Schadprogramme & E-Mail-Sicherheit',
+          bsig: '§ 30 Abs. 2 Nr. 7/10 BSIG',
+          intro:
+            'Wie gut sind Endgeräte und E-Mail gegen Schadsoftware geschützt?',
+          q: [
+            {
+              id: '6.1',
+              q: 'Ist die Ausführung von Office-Makros technisch deaktiviert?',
+              rec: 'Makros per Gruppenrichtlinie deaktivieren, nur signierte zulassen.',
+            },
+            {
+              id: '6.2',
+              q: 'Werden externe E-Mails explizit gekennzeichnet?',
+              rec: 'External-Banner aktivieren — senkt die Erfolgsquote von Phishing.',
+            },
+            {
+              id: '6.3',
+              q: 'Ist die vollständige Absenderadresse sichtbar und geprüft?',
+              rec: 'SPF, DKIM und DMARC implementieren, damit gefälschte Absender erkannt werden.',
+            },
+            {
+              id: '6.4',
+              q: 'Nutzen Sie eine aktuelle Antiviren- / EDR-Lösung?',
+              rec: 'Moderne EDR-Lösung mit zentralem Management statt reinem Signaturscanner.',
+            },
+            {
+              id: '6.5',
+              q: 'Ist ein Web- / DNS-Filter gegen bösartige Seiten aktiv?',
+              rec: 'DNS- oder Web-Filter einsetzen, um Schad- und Phishing-Domains zu blocken.',
+            },
+          ],
+        },
+        {
+          id: 's7',
+          n: '07',
+          short: 'Notfall',
+          t: 'Notfall- & Vorfallmanagement',
+          bsig: '§ 30 Abs. 2 Nr. 2 BSIG',
+          intro: 'Sind Sie handlungsfähig, wenn der Ernstfall eintritt?',
+          q: [
+            {
+              id: '7.1',
+              q: 'Haben Sie einen Notfallplan für IT-Sicherheitsvorfälle?',
+              rec: 'Incident-Response-Plan mit Erkennung, Eindämmung, Wiederanlauf, Nachbereitung.',
+            },
+            {
+              id: '7.2',
+              q: 'Wird eine Notfallübung regelmäßig durchgeführt?',
+              rec: 'Mindestens jährlich eine Table-Top-Übung durchführen.',
+            },
+            {
+              id: '7.3',
+              q: 'Enthält der Plan einen Kommunikationsplan (intern & extern)?',
+              rec: 'Kontakte offline vorhalten (IT-DL, Polizei, Datenschutzaufsicht, Kunden, Mobilnummern).',
+            },
+            {
+              id: '7.4',
+              q: 'Gibt es eine klare Rollen- und Aufgabenzuweisung?',
+              rec: 'Feste Rollen mit Stellvertretung definieren (Incident Lead, Technik, Kommunikation).',
+            },
+            {
+              id: '7.5',
+              q: 'Ist der NIS2-Meldeweg (24 h / 72 h / 1 Monat) vorbereitet?',
+              rec: 'Meldeprozess ans BSI vorab definieren — die 24-h-Frühwarnung lässt keine Zeit.',
+            },
+          ],
+        },
+        {
+          id: 's8',
+          n: '08',
+          short: 'Dokumentation',
+          t: 'Inventarisierung & Dokumentation',
+          bsig: '§ 30 Abs. 2 Nr. 1 BSIG',
+          intro: 'Wissen Sie jederzeit, was Sie schützen müssen?',
+          q: [
+            {
+              id: '8.1',
+              q: 'Verfügen Sie über eine dokumentierte Übersicht Ihrer IT-Landschaft?',
+              rec: 'Aktuellen Netz- und Systemplan pflegen.',
+            },
+            {
+              id: '8.2',
+              q: 'Ist dokumentiert, welche Zugänge zu Systemen bestehen?',
+              rec: 'Berechtigungskonzept dokumentieren als Grundlage für Least-Privilege.',
+            },
+            {
+              id: '8.3',
+              q: 'Sind Anwendungen inkl. Abhängigkeiten erfasst?',
+              rec: 'Anwendungen und Datenflüsse erfassen — Basis für BCM und Risikoanalyse.',
+            },
+            {
+              id: '8.4',
+              q: 'Werden diese Dokumentationen regelmäßig aktualisiert?',
+              rec: 'Festen Review-Zyklus festlegen (mind. jährlich).',
+            },
+            {
+              id: '8.5',
+              q: 'Sind Daten nach Schutzbedarf klassifiziert?',
+              rec: 'Datenklassifizierung einführen, um Schutzmaßnahmen risikogerecht zu steuern.',
+            },
+          ],
+        },
+      ];
+      var MODULES = {
+        produktion: {
+          id: 'mprod',
+          n: '09',
+          short: 'OT-Sicherheit',
+          t: 'OT- & Produktionssicherheit',
+          bsig: 'Branchenspezifisch',
+          intro: 'Sicherheit von Maschinen, Steuerungen und Produktionsnetzen.',
+          q: [
+            {
+              id: 'P.1',
+              q: 'Sind Produktionsnetze (OT) strikt vom Office-Netz (IT) getrennt?',
+              rec: 'OT/IT-Segmentierung mit kontrollierten Übergängen umsetzen.',
+            },
+            {
+              id: 'P.2',
+              q: 'Ist die Fernwartung von Maschinen abgesichert und protokolliert?',
+              rec: 'Herstellerfernzugriffe nur über gesicherte, zeitlich begrenzte Kanäle zulassen.',
+            },
+            {
+              id: 'P.3',
+              q: 'Gibt es ein Inventar aller OT-/ICS-Komponenten?',
+              rec: 'Steuerungen, SPS und HMIs vollständig inventarisieren.',
+            },
+            {
+              id: 'P.4',
+              q: 'Werden nicht patchbare Alt-Systeme kompensatorisch geschützt?',
+              rec: 'Legacy-Systeme durch Segmentierung und Monitoring kapseln.',
+            },
+            {
+              id: 'P.5',
+              q: 'Wird der Netzwerkverkehr in der OT überwacht?',
+              rec: 'OT-taugliches Monitoring (Anomalieerkennung) einsetzen.',
+            },
+            {
+              id: 'P.6',
+              q: 'Existiert ein Notfallplan speziell für Produktionsausfälle?',
+              rec: 'BCM für Fertigung mit manuellen Rückfallverfahren definieren.',
+            },
+          ],
+        },
+        gesundheit: {
+          id: 'mheal',
+          n: '09',
+          short: 'Gesundheits-IT',
+          t: 'Gesundheits-IT & Patientendaten',
+          bsig: 'Art. 9 DSGVO',
+          intro: 'Schutz sensibler Patientendaten und medizinischer Systeme.',
+          q: [
+            {
+              id: 'H.1',
+              q: 'Werden Patientendaten (Art. 9 DSGVO) besonders geschützt?',
+              rec: 'Gesundheitsdaten verschlüsseln, Zugriff auf das Behandlungsteam begrenzen.',
+            },
+            {
+              id: 'H.2',
+              q: 'Ist die Sicherheit medizinischer Geräte bewertet?',
+              rec: 'Vernetzte Medizingeräte inventarisieren, segmentieren, auf Updates prüfen.',
+            },
+            {
+              id: 'H.3',
+              q: 'Ist der Zugriff auf Patientenakten rollenbasiert und protokolliert?',
+              rec: 'Zugriffe nach Behandlungskontext einschränken und protokollieren.',
+            },
+            {
+              id: 'H.4',
+              q: 'Gibt es einen Notbetrieb bei IT-Ausfall?',
+              rec: 'Manuelle Notfallprozesse definieren, damit die Versorgung weiterläuft.',
+            },
+            {
+              id: 'H.5',
+              q: 'Ist bekannt, ob Sie KRITIS-/NIS2-Schwellen erreichen?',
+              rec: 'Versorgungskennzahlen gegen KRITIS-Schwellen prüfen.',
+            },
+            {
+              id: 'H.6',
+              q: 'Werden Zugänge ausgeschiedener Mitarbeitender zeitnah entzogen?',
+              rec: 'Joiner-Mover-Leaver-Prozess etablieren.',
+            },
+          ],
+        },
+        it: {
+          id: 'mit',
+          n: '09',
+          short: 'Secure Dev',
+          t: 'Sichere Software-Entwicklung & Betrieb',
+          bsig: 'NIS2 Lieferkette',
+          intro:
+            'Sicherheit in Entwicklung, CI/CD, Cloud und gegenüber Kunden.',
+          q: [
+            {
+              id: 'I.1',
+              q: 'Ist Sicherheit fester Bestandteil Ihres Entwicklungsprozesses (SSDLC)?',
+              rec: 'Security by Design: Threat Modeling, Code-Reviews, Security-Tests verankern.',
+            },
+            {
+              id: 'I.2',
+              q: 'Sind Ihre Code-Repositories und Zugänge abgesichert?',
+              rec: 'MFA, Branch-Protection, Least-Privilege; keine Secrets im Code.',
+            },
+            {
+              id: 'I.3',
+              q: 'Verwalten Sie Abhängigkeiten und deren Schwachstellen (SBOM)?',
+              rec: 'SBOM pflegen und Dependencies automatisiert auf CVEs scannen.',
+            },
+            {
+              id: 'I.4',
+              q: 'Werden Secrets zentral und sicher verwaltet?',
+              rec: 'Secrets-Management (Vault) statt Klartext; regelmäßige Rotation.',
+            },
+            {
+              id: 'I.5',
+              q: 'Sind Kundendaten mandantengetrennt (Tenant Isolation)?',
+              rec: 'Strikte Mandantentrennung sicherstellen.',
+            },
+            {
+              id: 'I.6',
+              q: 'Führen Sie regelmäßige Pentests / Security-Reviews durch?',
+              rec: 'Mindestens jährlich extern testen lassen und Findings nachverfolgen.',
+            },
+          ],
+        },
+        generic: {
+          id: 'mgen',
+          n: '09',
+          short: 'Lieferkette',
+          t: 'Lieferkette & Dienstleister-Governance',
+          bsig: '§ 30 Abs. 2 Nr. 4 BSIG',
+          intro: 'Sicherheit im Umgang mit Dienstleistern und Zulieferern.',
+          q: [
+            {
+              id: 'G.1',
+              q: 'Werden Lieferanten nach Sicherheitskriterien bewertet?',
+              rec: 'Kritische Dienstleister vor Beauftragung und regelmäßig prüfen.',
+            },
+            {
+              id: 'G.2',
+              q: 'Sind Sicherheitsanforderungen vertraglich geregelt?',
+              rec: 'Sicherheits- und Meldepflichten in Verträge aufnehmen.',
+            },
+            {
+              id: 'G.3',
+              q: 'Liegen Auftragsverarbeitungsverträge (AVV) vor?',
+              rec: 'Für Dienstleister mit Datenzugriff DSGVO-konforme AVV abschließen.',
+            },
+            {
+              id: 'G.4',
+              q: 'Sind kritische Abhängigkeiten von einzelnen Anbietern bekannt?',
+              rec: 'Klumpenrisiken und Single-Points-of-Failure identifizieren.',
+            },
+            {
+              id: 'G.5',
+              q: 'Werden ausgelagerte/Cloud-Dienste laufend überwacht?',
+              rec: 'Sicherheitsniveau und Zertifizierungen regelmäßig prüfen.',
+            },
+            {
+              id: 'G.6',
+              q: 'Sind Dienstleister zur Meldung von Vorfällen verpflichtet?',
+              rec: 'Vertragliche Vorfall-Meldepflichten mit Fristen vereinbaren.',
+            },
+          ],
+        },
+      };
+      function moduleFor(b) {
+        return MODULES[b] || MODULES.generic;
+      }
+
+      /* ---- State + Persistenz ---- */
+      var S = {
+        view: 'home',
+        nis2: {
+          step: 0,
+          firma: '',
+          email: '',
+          sektor: '',
+          emp: '',
+          rev: '',
+          bal: '',
+          specials: [],
+          sent: false,
+        },
+        assess: {
+          phase: 'intro',
+          sec: 0,
+          firma: '',
+          branche: '',
+          name: '',
+          email: '',
+          ans: {},
+          sent: false,
+        },
+      };
+      try {
+        var saved = localStorage.getItem('cybterra:tools:v1');
+        if (saved) {
+          var d = JSON.parse(saved);
+          if (d.nis2) S.nis2 = Object.assign(S.nis2, d.nis2);
+          if (d.assess) S.assess = Object.assign(S.assess, d.assess);
+        }
+      } catch (e) {}
+      function save() {
+        try {
+          localStorage.setItem(
+            'cybterra:tools:v1',
+            JSON.stringify({ nis2: S.nis2, assess: S.assess }),
+          );
+        } catch (e) {}
+      }
+
+      /* ---- Helpers ---- */
+      function lvl(s) {
+        return s >= 75
+          ? { t: 'Solide aufgestellt', c: '#3E8E5A', bg: '#E9F1EA' }
+          : s >= 45
+            ? { t: 'Handlungsbedarf', c: '#B8841F', bg: '#F6EDD8' }
+            : { t: 'Kritischer Handlungsbedarf', c: '#C24039', bg: '#F6E6E3' };
+      }
+      function bc(s) {
+        return s >= 75 ? '#3E8E5A' : s >= 45 ? '#B8841F' : '#C24039';
+      }
+      function esc(x) {
+        return (x || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/"/g, '&quot;');
+      }
+      function sectionsA() {
+        return BASE.concat([moduleFor(S.assess.branche)]);
+      }
+
+      /* ---- SVG-Radar (ersetzt recharts) ---- */
+      function radar(data) {
+        var cx = 160,
+          cy = 150,
+          R = 108,
+          N = data.length,
+          rings = 4,
+          out = '';
+        var pt = function (i, r) {
+          var a = -Math.PI / 2 + (i * 2 * Math.PI) / N;
+          return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+        };
+        for (var g = 1; g <= rings; g++) {
+          var rr = (R * g) / rings,
+            p = '';
+          for (var i = 0; i < N; i++) {
+            var c = pt(i, rr);
+            p +=
+              (i ? 'L' : 'M') + c[0].toFixed(1) + ' ' + c[1].toFixed(1) + ' ';
+          }
+          out +=
+            '<path d="' +
+            p +
+            'Z" fill="none" stroke="#DAD3C9" stroke-width="1"/>';
+        }
+        for (var i = 0; i < N; i++) {
+          var e = pt(i, R);
+          out +=
+            '<line x1="' +
+            cx +
+            '" y1="' +
+            cy +
+            '" x2="' +
+            e[0].toFixed(1) +
+            '" y2="' +
+            e[1].toFixed(1) +
+            '" stroke="#DAD3C9" stroke-width="1"/>';
+        }
+        var dp = '';
+        for (var i = 0; i < N; i++) {
+          var v = Math.max(data[i].score, 3);
+          var c = pt(i, (R * v) / 100);
+          dp += (i ? 'L' : 'M') + c[0].toFixed(1) + ' ' + c[1].toFixed(1) + ' ';
+        }
+        out +=
+          '<path d="' +
+          dp +
+          'Z" fill="#340B09" fill-opacity="0.24" stroke="#340B09" stroke-width="2"/>';
+        for (var i = 0; i < N; i++) {
+          var l = pt(i, R + 16),
+            a = -Math.PI / 2 + (i * 2 * Math.PI) / N,
+            an = l[0] < cx - 5 ? 'end' : l[0] > cx + 5 ? 'start' : 'middle';
+          out +=
+            '<text x="' +
+            l[0].toFixed(1) +
+            '" y="' +
+            (l[1] + 3).toFixed(1) +
+            '" font-size="10" font-family="DM Sans" fill="#6E6560" text-anchor="' +
+            an +
+            '">' +
+            esc(data[i].short) +
+            '</text>';
+        }
+        return (
+          '<svg viewBox="0 0 320 300" width="100%" height="300">' +
+          out +
+          '</svg>'
+        );
+      }
+
+      /* ---- Assessment-Statistik ---- */
+      function assessStats() {
+        var secs = sectionsA(),
+          ans = S.assess.ans,
+          valOf = function (v) {
+            for (var i = 0; i < OPTS.length; i++)
+              if (OPTS[i].v === v) return OPTS[i].val;
+          };
+        var ss = secs.map(function (s) {
+          var rel = s.q.filter(function (q) {
+            return ans[q.id] && ans[q.id] !== 'na';
+          });
+          var sc = rel.length
+            ? Math.round(
+                (rel.reduce(function (a, q) {
+                  return a + valOf(ans[q.id]);
+                }, 0) /
+                  (rel.length * 2)) *
+                  100,
+              )
+            : null;
+          return { id: s.id, short: s.short, t: s.t, n: s.n, score: sc };
+        });
+        var scored = ss.filter(function (s) {
+          return s.score !== null;
+        });
+        var overall = scored.length
+          ? Math.round(
+              scored.reduce(function (a, s) {
+                return a + s.score;
+              }, 0) / scored.length,
+            )
+          : 0;
+        var gaps = [];
+        secs.forEach(function (s) {
+          s.q.forEach(function (q) {
+            if (ans[q.id] === 'nein' || ans[q.id] === 'teilweise')
+              gaps.push({
+                q: q.q,
+                rec: q.rec,
+                id: q.id,
+                secN: s.n,
+                secT: s.t,
+                bsig: s.bsig,
+                prio: ans[q.id] === 'nein' ? 'hoch' : 'mittel',
+              });
+          });
+        });
+        gaps.sort(function (a, b) {
+          return (a.prio === 'hoch' ? 0 : 1) - (b.prio === 'hoch' ? 0 : 1);
+        });
+        var strengths = ss.filter(function (s) {
+          return s.score !== null && s.score >= 75;
+        });
+        var total = 0;
+        secs.forEach(function (s) {
+          total += s.q.length;
+        });
+        var answered = 0;
+        secs.forEach(function (s) {
+          s.q.forEach(function (q) {
+            if (ans[q.id]) answered++;
+          });
+        });
+        return {
+          ss: ss,
+          overall: overall,
+          gaps: gaps,
+          strengths: strengths,
+          total: total,
+          answered: answered,
+          secs: secs,
+        };
+      }
+
+      /* ================= RENDER ================= */
+      function render() {
+        var app = document.getElementById('app'),
+          h = '';
+        if (S.view === 'home') h = viewHome();
+        else if (S.view === 'nis2') h = viewNis2();
+        else h = viewAssess();
+        app.innerHTML = '<div class="wrap">' + h + '</div>';
+        window.scrollTo(0, 0);
+      }
+
+      function viewHome() {
+        return (
+          brand('Cyber-Security & NIS2-Compliance') +
+          '<p class="eye">Kostenlose Selbst-Tools</p>' +
+          '<h1 class="h">Prüfen Sie Ihre <em>Sicherheit</em> — in Minuten.</h1>' +
+          '<p class="lead">Zwei eigenständige Werkzeuge: eine schnelle NIS2-Einstufung oder eine umfassende Sicherheits-Standortbestimmung. Wählen Sie, was Sie brauchen.</p>' +
+          '<div class="choose">' +
+          '<button class="tile" data-act="go-nis2"><span class="tag">2 Minuten</span><h3>NIS2-Betroffenheitscheck</h3><p>Fallen Sie unter das NIS2-Gesetz? Sektor und Größe eingeben und sofort Einstufung, Pflichten und Bußgeldrahmen erfahren.</p><span class="go">Check starten →</span></button>' +
+          '<button class="tile" data-act="go-assess"><span class="tag">15 Minuten</span><h3>Cyber-Security-Assessment</h3><p>Fragen aus acht Bereichen plus Branchenmodul. Am Ende: Reifegrad-Profil, Radar und konkrete Empfehlungen als PDF.</p><span class="go">Assessment starten →</span></button>' +
+          '</div>' +
+          foot()
+        );
+      }
+
+      /* ---------- NIS2 ---------- */
+      function nis2Class() {
+        var d = S.nis2;
+        if (d.specials.length > 0) return 'crit';
+        if (!d.sektor || d.sektor === 'none') return 'clear';
+        var small = d.emp === 'lt50' && d.rev === 'lte10' && d.bal === 'lte10';
+        var large =
+          d.emp === 'gte250' || (d.rev === 'gt50' && d.bal === 'gt43');
+        if (small) return 'clear';
+        if (ANH_I[d.sektor] && large) return 'crit';
+        return 'imp';
+      }
+      function seg(field, opts) {
+        var d = S.nis2;
+        return (
+          '<div class="seg">' +
+          opts
+            .map(function (o) {
+              var on = d[field] === o[0];
+              return (
+                '<button class="opt' +
+                (on ? ' on' : '') +
+                '" data-act="nis2-seg" data-field="' +
+                field +
+                '" data-val="' +
+                o[0] +
+                '"' +
+                (on
+                  ? ' style="color:var(--brand);border-color:var(--brand)"'
+                  : '') +
+                '><span class="d"></span>' +
+                o[1] +
+                '</button>'
+              );
+            })
+            .join('') +
+          '</div>'
+        );
+      }
+      function viewNis2() {
+        var d = S.nis2;
+        if (d.step === 0) {
+          return (
+            '<button class="back" data-act="home">← Startseite</button>' +
+            brand('NIS2-Betroffenheitscheck') +
+            '<p class="eye">In 2 Minuten · kostenlos</p><h1 class="h" style="font-size:32px">Fallen Sie unter <em>NIS2</em>?</h1>' +
+            '<p class="lead">Seit Dezember 2025 gilt das NIS2-Umsetzungsgesetz — ohne Übergangsfrist. Drei Angaben genügen für Ihre vorläufige Einstufung.</p>' +
+            '<div class="card"><h3>1 · Ihr Sektor</h3><p class="sub">Maßgeblich ist die Haupttätigkeit.</p>' +
+            '<select class="sel" data-model="nis2.sektor"><option value="">Bitte wählen…</option>' +
+            '<optgroup label="Anhang I – Hohe Kritikalität">' +
+            SEK_I.map(function (s) {
+              return (
+                '<option value="' +
+                s[0] +
+                '"' +
+                (d.sektor === s[0] ? ' selected' : '') +
+                '>' +
+                s[1] +
+                '</option>'
+              );
+            }).join('') +
+            '</optgroup>' +
+            '<optgroup label="Anhang II – Sonstige kritische Sektoren">' +
+            SEK_II.map(function (s) {
+              return (
+                '<option value="' +
+                s[0] +
+                '"' +
+                (d.sektor === s[0] ? ' selected' : '') +
+                '>' +
+                s[1] +
+                '</option>'
+              );
+            }).join('') +
+            '</optgroup>' +
+            '<option value="none"' +
+            (d.sektor === 'none' ? ' selected' : '') +
+            '>Keiner dieser Sektoren</option></select></div>' +
+            '<div class="card"><h3>2 · Unternehmensgröße</h3><p class="sub">Ein erreichtes Kriterium genügt.</p>' +
+            '<div class="field" style="margin-bottom:14px"><label>Mitarbeitende</label>' +
+            seg('emp', [
+              ['lt50', '< 50'],
+              ['50-249', '50–249'],
+              ['gte250', '≥ 250'],
+            ]) +
+            '</div>' +
+            '<div class="field" style="margin-bottom:14px"><label>Jahresumsatz</label>' +
+            seg('rev', [
+              ['lte10', '≤ 10 Mio'],
+              ['10-50', '10–50 Mio'],
+              ['gt50', '> 50 Mio'],
+            ]) +
+            '</div>' +
+            '<div class="field"><label>Jahresbilanzsumme</label>' +
+            seg('bal', [
+              ['lte10', '≤ 10 Mio'],
+              ['10-43', '10–43 Mio'],
+              ['gt43', '> 43 Mio'],
+            ]) +
+            '</div></div>' +
+            '<div class="card"><h3>3 · Sonderfälle <span style="font-weight:400;color:var(--dim);font-size:13px">(größenunabhängig)</span></h3><p class="sub">Falls zutreffend — sonst überspringen.</p><div class="optslist">' +
+            SPECIALS.map(function (s) {
+              var on = d.specials.indexOf(s[0]) > -1;
+              return (
+                '<button class="opt' +
+                (on ? ' on' : '') +
+                '" data-act="nis2-special" data-val="' +
+                s[0] +
+                '"' +
+                (on
+                  ? ' style="color:var(--brand);border-color:var(--brand)"'
+                  : '') +
+                '><span class="d" style="border-radius:4px"></span>' +
+                s[1] +
+                '</button>'
+              );
+            }).join('') +
+            '</div></div>' +
+            '<div class="nav"><span></span><button class="btn btn-p" ' +
+            (d.sektor && d.emp && d.rev && d.bal ? '' : 'disabled') +
+            ' data-act="nis2-result">Ergebnis anzeigen →</button></div>'
+          );
+        }
+        var V = {
+          crit: {
+            bg: '#F6E6E3',
+            bd: '#E4B5AE',
+            c: '#C24039',
+            vh: 'Besonders wichtige Einrichtung',
+            vp: 'Ihr Unternehmen fällt voraussichtlich als besonders wichtige Einrichtung unter NIS2 — mit proaktiver BSI-Aufsicht und persönlicher Haftung der Geschäftsleitung.',
+            fine: 'Bußgeld bis 10 Mio € oder 2 % des weltweiten Jahresumsatzes',
+          },
+          imp: {
+            bg: '#F6EDD8',
+            bd: '#E4CF9E',
+            c: '#B8841F',
+            vh: 'Wichtige Einrichtung',
+            vp: 'Ihr Unternehmen fällt voraussichtlich als wichtige Einrichtung unter NIS2. Es gelten die vollen Risikomanagement-Pflichten nach § 30 BSIG.',
+            fine: 'Bußgeld bis 7 Mio € oder 1,4 % des weltweiten Jahresumsatzes',
+          },
+          clear: {
+            bg: '#E9F1EA',
+            bd: '#BFD9C4',
+            c: '#3E8E5A',
+            vh: 'Vorläufig nicht direkt betroffen',
+            vp: 'Ihr Unternehmen fällt derzeit nicht unmittelbar unter NIS2. Über Lieferketten-Anforderungen Ihrer Kunden können Sie dennoch faktisch betroffen sein.',
+            fine: 'Keine direkten Pflichten — Prüfung dennoch empfohlen',
+          },
+        };
+        var cls = nis2Class(),
+          v = V[cls],
+          betroffen = cls !== 'clear';
+        var OBL = [
+          'Risikoanalyse & Sicherheitskonzept',
+          'Incident Handling & Meldewesen',
+          'Business Continuity & Backup',
+          'Sicherheit der Lieferkette',
+          'Sichere Beschaffung & Entwicklung',
+          'Wirksamkeits-Bewertung',
+          'Cyberhygiene & Schulungen',
+          'Kryptografie',
+          'Zugriffskontrolle & Personalsicherheit',
+          'Multi-Faktor-Authentifizierung',
+        ];
+        var h =
+          '<button class="back" data-act="home">← Startseite</button>' +
+          '<div class="toolbar"><button class="btn btn-g" data-act="nis2-back">← Zurück</button><button class="btn btn-g" data-act="print">⤓ Als PDF speichern</button></div>' +
+          letter() +
+          '<div class="verdict" style="background:' +
+          v.bg +
+          ';border-color:' +
+          v.bd +
+          '"><div class="vt" style="color:' +
+          v.c +
+          '">NIS2-Einstufung</div><h2 class="vh" style="color:' +
+          v.c +
+          '">' +
+          v.vh +
+          '</h2><p class="vp">' +
+          v.vp +
+          '</p><div class="vfine" style="color:' +
+          v.c +
+          '">' +
+          v.fine +
+          '</div></div>';
+        if (betroffen)
+          h +=
+            '<div class="conseq"><div class="ci"><div class="k">Meldepflichten</div><div class="v">Erhebliche Vorfälle: 24 h Frühwarnung · 72 h Meldung · 1 Monat Abschlussbericht</div></div>' +
+            '<div class="ci"><div class="k">Registrierung</div><div class="v">Registrierungspflicht beim BSI (Frist 06.03.2026 abgelaufen — verspätete Registrierung dringend)</div></div>' +
+            '<div class="ci"><div class="k">Pflichten (§ 30 BSIG)</div><div class="obl">' +
+            OBL.map(function (o) {
+              return '<span>' + o + '</span>';
+            }).join('') +
+            '</div></div></div>';
+        if (!d.sent)
+          h +=
+            '<div class="cta"><h3>' +
+            (betroffen
+              ? 'Die Frist läuft bereits — handeln Sie jetzt'
+              : 'Sicher ist sicher') +
+            '</h3>' +
+            '<p>' +
+            (betroffen
+              ? 'Fordern Sie eine kostenlose Ersteinschätzung an — wir zeigen Ihre drei dringendsten Handlungsfelder.'
+              : 'Lassen Sie Ihre Einstufung kostenlos gegenprüfen — auch über die Lieferkette kann NIS2 relevant werden.') +
+            '</p>' +
+            '<div class="row2" style="margin-bottom:12px"><input class="inp" placeholder="Unternehmen" data-model="nis2.firma" value="' +
+            esc(d.firma) +
+            '"><input class="inp" type="email" placeholder="E-Mail (geschäftlich)" data-model="nis2.email" value="' +
+            esc(d.email) +
+            '"></div>' +
+            '<button class="btn btn-p" ' +
+            (d.firma && d.email ? '' : 'disabled') +
+            ' data-act="nis2-lead">Kostenlose Ersteinschätzung anfordern →</button></div>';
+        else
+          h +=
+            '<div class="cta"><h3>Anfrage eingegangen.</h3><p style="margin:0">Wir melden uns binnen 24 Stunden unter ' +
+            esc(d.email) +
+            '. Schreiben Sie uns jederzeit an ' +
+            CONTACT.mail +
+            '.</p></div>';
+        return h + foot();
+      }
+
+      /* ---------- Assessment ---------- */
+      function viewAssess() {
+        var a = S.assess;
+        if (a.phase === 'intro') {
+          return (
+            '<button class="back" data-act="home">← Startseite</button>' +
+            brand('Cyber-Security-Assessment') +
+            '<p class="eye">Umfassende Standortbestimmung</p><h1 class="h">Wie sicher ist Ihr Unternehmen <em>wirklich</em>?</h1>' +
+            '<p class="lead">Acht Kernbereiche plus ein branchenspezifisches Fachmodul. Am Ende: Ihr Reifegrad-Profil mit priorisierten, konkreten Empfehlungen zum Download.</p>' +
+            '<div class="card"><h3>Angaben zu Ihrem Unternehmen</h3><p class="sub">Ihre Branche steuert das passende Fachmodul.</p><div class="fg">' +
+            '<div class="row2"><div class="field"><label>Unternehmen</label><input class="inp" data-model="assess.firma" value="' +
+            esc(a.firma) +
+            '" placeholder="Muster GmbH"></div>' +
+            '<div class="field"><label>Branche</label><select class="sel" data-model="assess.branche">' +
+            BRANCHEN.map(function (b) {
+              return (
+                '<option value="' +
+                b[0] +
+                '"' +
+                (a.branche === b[0] ? ' selected' : '') +
+                '>' +
+                b[1] +
+                '</option>'
+              );
+            }).join('') +
+            '</select></div></div>' +
+            '<div class="row2"><div class="field"><label>Ansprechpartner</label><input class="inp" data-model="assess.name" value="' +
+            esc(a.name) +
+            '" placeholder="Vor- und Nachname"></div>' +
+            '<div class="field"><label>E-Mail (geschäftlich)</label><input class="inp" type="email" data-model="assess.email" value="' +
+            esc(a.email) +
+            '" placeholder="name@firma.de"></div></div></div></div>' +
+            '<button class="btn btn-p" ' +
+            (a.firma && a.email && a.branche ? '' : 'disabled') +
+            ' data-act="assess-start">Assessment starten →</button>' +
+            '<div class="meta"><span><i></i>8 Bereiche + Fachmodul</span><span><i></i>ca. 15 Minuten</span><span><i></i>Fortschritt wird gespeichert</span></div>'
+          );
+        }
+        if (a.phase === 'quiz') {
+          var st = assessStats(),
+            sec = st.secs[a.sec];
+          var h =
+            '<button class="back" data-act="home">← Startseite</button>' +
+            '<div class="pbar"><div class="ptop"><b>' +
+            sec.t +
+            '</b><span>' +
+            st.answered +
+            '/' +
+            st.total +
+            '</span></div>' +
+            '<div class="ptrack"><div class="pfill" style="width:' +
+            (st.answered / st.total) * 100 +
+            '%"></div></div>' +
+            '<div class="dots">' +
+            st.secs
+              .map(function (s, i) {
+                var done = s.q.every(function (q) {
+                  return a.ans[q.id];
+                });
+                return (
+                  '<div class="dot ' +
+                  (i === a.sec ? 'cur' : done ? 'done' : '') +
+                  '" data-act="assess-goto" data-i="' +
+                  i +
+                  '"></div>'
+                );
+              })
+              .join('') +
+            '</div></div>' +
+            '<div style="margin:4px 0 20px"><span class="secn">BEREICH ' +
+            sec.n +
+            ' · ' +
+            sec.short.toUpperCase() +
+            '</span><h2 class="sect">' +
+            sec.t +
+            '</h2><p class="seci">' +
+            sec.intro +
+            '</p></div>';
+          h += sec.q
+            .map(function (q) {
+              var ic = q.info
+                ? '<span class="info" tabindex="0">i<span class="tip">' +
+                  esc(q.info) +
+                  '</span></span>'
+                : '';
+              return (
+                '<div class="q"><div class="qnum">Frage ' +
+                q.id +
+                '</div><div class="qt"><span>' +
+                q.q +
+                '</span>' +
+                ic +
+                '</div><div class="opts">' +
+                OPTS.map(function (o) {
+                  var on = a.ans[q.id] === o.v;
+                  return (
+                    '<button class="opt' +
+                    (on ? ' on' : '') +
+                    '" data-act="assess-opt" data-qid="' +
+                    q.id +
+                    '" data-val="' +
+                    o.v +
+                    '"' +
+                    (on
+                      ? ' style="color:' + o.c + ';border-color:' + o.c + '"'
+                      : '') +
+                    '><span class="d"></span>' +
+                    o.t +
+                    '</button>'
+                  );
+                }).join('') +
+                '</div></div>'
+              );
+            })
+            .join('');
+          var secDone = sec.q.every(function (q) {
+            return a.ans[q.id];
+          });
+          h +=
+            '<div class="nav"><button class="btn btn-g" data-act="assess-prev">← Zurück</button>' +
+            (a.sec < st.secs.length - 1
+              ? '<button class="btn btn-p" ' +
+                (secDone ? '' : 'disabled') +
+                ' data-act="assess-next">Weiter →</button>'
+              : '<button class="btn btn-p" ' +
+                (secDone ? '' : 'disabled') +
+                ' data-act="assess-report">Auswertung anzeigen →</button>') +
+            '</div>';
+          return h;
+        }
+        /* report */
+        var st = assessStats(),
+          lv = lvl(st.overall),
+          a = S.assess;
+        var h =
+          '<button class="back" data-act="home">← Startseite</button>' +
+          '<div class="toolbar"><button class="btn btn-g" data-act="assess-edit">← Antworten ändern</button><button class="btn btn-g" data-act="print">⤓ Als PDF speichern</button></div>' +
+          letter() +
+          '<div class="rhero"><div class="score"><div class="big" style="color:' +
+          lv.c +
+          '">' +
+          st.overall +
+          '<span style="font-size:22px">%</span></div><div class="lbl">Sicherheits-Reifegrad</div></div>' +
+          '<div class="rhero-txt"><div class="rlvl" style="color:' +
+          lv.c +
+          ';background:' +
+          lv.bg +
+          '">● ' +
+          lv.t +
+          '</div><h2>Auswertung für ' +
+          esc(a.firma || 'Ihr Unternehmen') +
+          '</h2>' +
+          '<p>' +
+          (a.branche
+            ? BRANCHEN.filter(function (b) {
+                return b[0] === a.branche;
+              })[0][1] + ' · '
+            : '') +
+          st.total +
+          ' Kontrollfragen aus ' +
+          st.secs.length +
+          ' Bereichen.</p></div></div>' +
+          '<div class="card"><h3><span style="color:var(--brand)">◇</span> Ihr Sicherheitsprofil</h3><p class="sub">Je weiter außen, desto besser aufgestellt.</p>' +
+          '<div class="chartgrid"><div>' +
+          radar(
+            st.ss.map(function (s) {
+              return { short: s.short, score: s.score || 0 };
+            }),
+          ) +
+          '</div><div class="bars">' +
+          st.ss
+            .map(function (s) {
+              return (
+                '<div class="barrow"><div class="bart"><small>' +
+                s.n +
+                '</small>' +
+                s.t +
+                '</div><div class="barv" style="color:' +
+                (s.score !== null ? bc(s.score) : 'var(--dim)') +
+                '">' +
+                (s.score !== null ? s.score + '%' : 'n/a') +
+                '</div><div class="bartrack"><div class="barfill" style="width:' +
+                (s.score || 0) +
+                '%;background:' +
+                (s.score !== null ? bc(s.score) : 'var(--line2)') +
+                '"></div></div></div>'
+              );
+            })
+            .join('') +
+          '</div></div></div>';
+        var krit = st.gaps.filter(function (g) {
+          return g.prio === 'hoch';
+        }).length;
+        h +=
+          '<div class="card"><h3><span style="color:var(--brand)">▤</span> Zusammenfassung für die Geschäftsleitung</h3><p class="mgmt"><b>' +
+          esc(a.firma || 'Ihr Unternehmen') +
+          '</b> erreicht einen Reifegrad von <b>' +
+          st.overall +
+          '%</b> (' +
+          lv.t.toLowerCase() +
+          '). ' +
+          (krit > 0
+            ? 'Es wurden <b>' +
+              krit +
+              ' kritische Lücken</b> identifiziert, die vorrangig zu schließen sind.'
+            : 'Keine kritischen Lücken identifiziert.') +
+          (st.gaps.length > 0
+            ? ' Insgesamt <b>' + st.gaps.length + ' Handlungsempfehlungen</b>.'
+            : '') +
+          '</p>' +
+          (st.strengths.length > 0
+            ? '<div style="margin-top:12px">' +
+              st.strengths
+                .map(function (s) {
+                  return '<span class="strength">✓ ' + s.t + '</span>';
+                })
+                .join('') +
+              '</div>'
+            : '') +
+          '</div>';
+        if (st.gaps.length > 0) {
+          h +=
+            '<div class="card"><h3><span style="color:var(--amber)">▲</span> Handlungsbedarf & Empfehlungen</h3><p class="sub">Priorisiert nach Dringlichkeit.</p>' +
+            st.gaps
+              .map(function (g) {
+                var hoch = g.prio === 'hoch';
+                return (
+                  '<div class="gap"><div class="gap-h"><span class="badge" style="color:' +
+                  (hoch ? '#C24039' : '#B8841F') +
+                  ';background:' +
+                  (hoch ? '#F6E6E3' : '#F6EDD8') +
+                  '">' +
+                  (hoch ? 'Hoch' : 'Mittel') +
+                  '</span><div><div class="gap-q">' +
+                  g.q +
+                  '</div><div class="gap-sec">' +
+                  g.secN +
+                  ' · ' +
+                  g.secT +
+                  (g.bsig ? ' · Bezug: ' + g.bsig : '') +
+                  '</div></div></div><div class="gap-rec"><b>Empfehlung: </b>' +
+                  g.rec +
+                  '</div></div>'
+                );
+              })
+              .join('') +
+            '</div>';
+        }
+        if (!a.sent)
+          h +=
+            '<div class="cta"><h3>Sollen wir gemeinsam die Lücken schließen?</h3><p>In einem kostenlosen 30-minütigen Erstgespräch priorisieren wir Ihre Handlungsfelder. Schreiben Sie uns an ' +
+            CONTACT.mail +
+            '.</p><button class="btn btn-p" data-act="assess-lead">Kostenloses Erstgespräch vereinbaren →</button></div>';
+        else
+          h +=
+            '<div class="cta"><h3>Vielen Dank, ' +
+            esc((a.name || a.firma || '').split(' ')[0]) +
+            '!</h3><p style="margin:0">Ihre Auswertung ist eingegangen. Wir melden uns binnen 24 Stunden unter ' +
+            esc(a.email) +
+            '.</p></div>';
+        return h + foot();
+      }
+
+      /* ================= EVENTS ================= */
+      document.addEventListener('click', function (e) {
+        var el = e.target.closest('[data-act]');
+        if (!el) return;
+        var act = el.getAttribute('data-act');
+        if (act === 'home') {
+          S.view = 'home';
+        } else if (act === 'go-nis2') {
+          S.view = 'nis2';
+          S.nis2.step = 0;
+        } else if (act === 'go-assess') {
+          S.view = 'assess';
+          S.assess.phase = 'intro';
+        } else if (act === 'nis2-seg') {
+          S.nis2[el.getAttribute('data-field')] = el.getAttribute('data-val');
+        } else if (act === 'nis2-special') {
+          var v = el.getAttribute('data-val'),
+            i = S.nis2.specials.indexOf(v);
+          if (i > -1) S.nis2.specials.splice(i, 1);
+          else S.nis2.specials.push(v);
+        } else if (act === 'nis2-result') {
+          S.nis2.step = 1;
+        } else if (act === 'nis2-back') {
+          S.nis2.step = 0;
+        } else if (act === 'nis2-lead') {
+          /* TODO(cybterra): fetch('/api/nis2-lead',{method:'POST',body:JSON.stringify(S.nis2)}) */ S.nis2.sent = true;
+        } else if (act === 'assess-start') {
+          S.assess.phase = 'quiz';
+          S.assess.sec = 0;
+        } else if (act === 'assess-opt') {
+          S.assess.ans[el.getAttribute('data-qid')] =
+            el.getAttribute('data-val');
+        } else if (act === 'assess-goto') {
+          S.assess.sec = parseInt(el.getAttribute('data-i'), 10);
+        } else if (act === 'assess-prev') {
+          if (S.assess.sec === 0) S.assess.phase = 'intro';
+          else S.assess.sec--;
+        } else if (act === 'assess-next') {
+          S.assess.sec++;
+        } else if (act === 'assess-report') {
+          S.assess.phase = 'report';
+        } else if (act === 'assess-edit') {
+          S.assess.phase = 'quiz';
+        } else if (act === 'assess-lead') {
+          /* TODO(cybterra): fetch('/api/assessment',{method:'POST',body:JSON.stringify(S.assess)}) */ S.assess.sent = true;
+        } else if (act === 'print') {
+          window.print();
+          return;
+        } else return;
+        save();
+        render();
+      });
+      /* Text-Inputs: Zustand ohne Re-Render aktualisieren (Fokus behalten) */
+      document.addEventListener('input', function (e) {
+        var el = e.target.closest('[data-model]');
+        if (!el) return;
+        var path = el.getAttribute('data-model').split('.');
+        S[path[0]][path[1]] = el.value;
+        save();
+      });
+      /* Selects: aktualisieren + neu rendern */
+      document.addEventListener('change', function (e) {
+        var el = e.target.closest('select[data-model]');
+        if (!el) return;
+        var path = el.getAttribute('data-model').split('.');
+        S[path[0]][path[1]] = el.value;
+        save();
+        render();
+      });
+
+      render();
+    </script>
+  </body>
+</html>
