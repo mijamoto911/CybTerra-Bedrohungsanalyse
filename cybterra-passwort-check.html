@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passwort-Härtetest — CybTerra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --oxblood: #340B09;
+    --oxblood-soft: #5A1512;
+    --cream: #EFEDE8;
+    --cream-deep: #E4E0D7;
+    --ink-60: rgba(52, 11, 9, 0.60);
+    --ink-40: rgba(52, 11, 9, 0.40);
+    --hairline: rgba(52, 11, 9, 0.14);
+    --weak:   #9E2B25;
+    --fair:   #B07D3C;
+    --strong: #4A6B4D;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  .cybt-pw {
+    font-family: "Poppins", system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--oxblood);
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 28px 48px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .cybt-pw .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    margin: 0 0 14px;
+  }
+  .cybt-pw h1 {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+  }
+  .cybt-pw .lede {
+    font-size: 1.02rem;
+    color: var(--ink-60);
+    margin: 0 0 30px;
+    max-width: 46ch;
+  }
+
+  .cybt-pw .field-wrap { position: relative; margin-bottom: 10px; }
+  .cybt-pw input[type="text"],
+  .cybt-pw input[type="password"] {
+    width: 100%;
+    font-family: var(--mono);
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    color: var(--oxblood);
+    background: var(--cream);
+    border: 1.5px solid var(--oxblood);
+    border-radius: 2px;
+    padding: 18px 58px 18px 18px;
+    outline: none;
+    transition: box-shadow 0.15s ease;
+  }
+  .cybt-pw input::placeholder { color: var(--ink-40); letter-spacing: 0; font-family: "Poppins", sans-serif; }
+  .cybt-pw input:focus-visible { box-shadow: 0 0 0 3px rgba(52,11,9,0.18); }
+
+  .cybt-pw .reveal {
+    position: absolute;
+    right: 8px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    font-family: "Poppins", sans-serif;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-60);
+    padding: 8px 10px; border-radius: 2px;
+  }
+  .cybt-pw .reveal:hover { color: var(--oxblood); }
+  .cybt-pw .reveal:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 1px; }
+
+  .cybt-pw .privacy {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; color: var(--ink-60); margin: 0 0 30px;
+  }
+  .cybt-pw .privacy .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--strong); flex: none; }
+
+  /* ---- result panel ---- */
+  .cybt-pw .panel {
+    border-top: 1px solid var(--hairline);
+    padding-top: 26px;
+  }
+
+  .cybt-pw .clock-label {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-60); margin: 0 0 6px;
+  }
+  .cybt-pw .clock {
+    font-family: var(--mono);
+    font-size: clamp(2rem, 8vw, 3.4rem);
+    font-weight: 500;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    color: var(--oxblood);
+    margin: 0 0 4px;
+    transition: color 0.25s ease;
+    word-break: break-word;
+  }
+  .cybt-pw .clock-sub { font-size: 0.85rem; color: var(--ink-60); margin: 0 0 22px; }
+
+  .cybt-pw .segments { display: flex; gap: 5px; margin: 0 0 10px; }
+  .cybt-pw .seg {
+    height: 8px; flex: 1; border-radius: 1px;
+    background: var(--cream-deep);
+    transition: background 0.25s ease;
+  }
+  .cybt-pw .meta {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 18px;
+    font-family: var(--mono); font-size: 0.78rem; color: var(--ink-60);
+    margin: 0 0 24px;
+  }
+  .cybt-pw .meta strong { color: var(--oxblood); font-weight: 600; }
+
+  .cybt-pw .rating {
+    display: inline-block;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 2px; margin: 0 0 22px;
+    color: var(--cream);
+    transition: background 0.25s ease;
+  }
+
+  .cybt-pw .chips { display: flex; flex-direction: column; gap: 8px; margin: 0 0 26px; }
+  .cybt-pw .chip {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 0.9rem; color: var(--oxblood);
+    padding: 11px 14px; border: 1px solid var(--hairline); border-radius: 2px;
+    background: rgba(255,255,255,0.35);
+  }
+  .cybt-pw .chip .mark { font-family: var(--mono); font-weight: 700; flex: none; line-height: 1.5; }
+  .cybt-pw .chip.warn .mark { color: var(--weak); }
+  .cybt-pw .chip.good .mark { color: var(--strong); }
+
+  .cybt-pw .scenarios {
+    border-top: 1px solid var(--hairline);
+    padding-top: 20px;
+  }
+  .cybt-pw .scenarios summary {
+    cursor: pointer; list-style: none;
+    font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--ink-60); display: flex; align-items: center; gap: 8px;
+  }
+  .cybt-pw .scenarios summary::-webkit-details-marker { display: none; }
+  .cybt-pw .scenarios summary:hover { color: var(--oxblood); }
+  .cybt-pw .scenarios summary .tw { font-family: var(--mono); transition: transform 0.2s ease; }
+  .cybt-pw .scenarios[open] summary .tw { transform: rotate(90deg); }
+  .cybt-pw .scen-row {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding: 13px 0; border-bottom: 1px solid var(--hairline);
+    font-size: 0.88rem;
+  }
+  .cybt-pw .scen-row:last-child { border-bottom: none; }
+  .cybt-pw .scen-row .who { color: var(--ink-60); }
+  .cybt-pw .scen-row .who b { display: block; color: var(--oxblood); font-weight: 600; }
+  .cybt-pw .scen-row .val { font-family: var(--mono); font-weight: 500; text-align: right; white-space: nowrap; }
+
+  .cybt-pw .empty { color: var(--ink-40); font-family: var(--mono); font-size: 1.4rem; letter-spacing: -0.01em; }
+
+  .cybt-pw .foot {
+    margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--hairline);
+    font-size: 0.76rem; color: var(--ink-40); line-height: 1.5;
+  }
+  .cybt-pw .foot b { color: var(--ink-60); font-weight: 600; }
+
+  @media (max-width: 480px) {
+    .cybt-pw { padding: 30px 18px 40px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cybt-pw * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="cybt-pw">
+  <p class="eyebrow">CybTerra · Härtetest</p>
+  <h1>Wie lange hält Ihr Passwort einem Angriff stand?</h1>
+  <p class="lede">Tippen Sie ein Muster ein und beobachten Sie, was mit der Zeit passiert, wenn Sie es länger machen. Der Effekt überrascht die meisten.</p>
+
+  <div class="field-wrap">
+    <input type="text" id="pw" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+           placeholder="Muster eingeben – nicht Ihr echtes Passwort" aria-label="Passwort-Muster">
+    <button class="reveal" id="toggle" type="button" aria-pressed="false">Verbergen</button>
+  </div>
+  <p class="privacy"><span class="dot" aria-hidden="true"></span> Alles bleibt in Ihrem Browser. Es wird nichts gesendet, nichts gespeichert.</p>
+
+  <div class="panel">
+    <p class="clock-label">Geschätzte Zeit bis zum Knacken</p>
+    <p class="clock" id="clock"><span class="empty">– –</span></p>
+    <p class="clock-sub" id="clockSub">Offline-Angriff mit moderner Grafikkarte (≈ 100 Mrd. Versuche/Sek.)</p>
+
+    <div class="segments" id="segments" aria-hidden="true">
+      <div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div>
+    </div>
+    <div class="meta">
+      <span>Länge: <strong id="mLen">0</strong> Zeichen</span>
+      <span>Zeichenraum: <strong id="mPool">0</strong></span>
+      <span>Entropie: <strong id="mBits">0</strong> Bit</span>
+    </div>
+
+    <span class="rating" id="rating" style="display:none"></span>
+
+    <div class="chips" id="chips"></div>
+
+    <details class="scenarios" id="scen" style="display:none">
+      <summary><span class="tw">›</span> Andere Angriffsszenarien anzeigen</summary>
+      <div class="scen-row">
+        <span class="who"><b>Online, gedrosselt</b>Website mit Sperren, ≈ 1.000/Sek.</span>
+        <span class="val" id="sOnline">–</span>
+      </div>
+      <div class="scen-row">
+        <span class="who"><b>Offline, langsamer Hash</b>bcrypt o. Ä., ≈ 10.000/Sek.</span>
+        <span class="val" id="sBcrypt">–</span>
+      </div>
+      <div class="scen-row">
+        <span class="who"><b>Offline, schnelle GPU</b>gestohlene Datenbank, ≈ 100 Mrd./Sek.</span>
+        <span class="val" id="sGpu">–</span>
+      </div>
+    </details>
+  </div>
+
+  <p class="foot">
+    <b>Was das zeigt:</b> Länge schlägt Komplexität. Vier zufällige Wörter sind für einen Menschen leichter zu merken und für einen Computer viel schwerer zu knacken als „S0mm3r!“.
+    Die Werte sind eine Schätzung auf Basis von Zeichenraum, Länge und erkennbaren Mustern – kein Gütesiegel.
+  </p>
+</div>
+
+<script>
+(function () {
+  var input = document.getElementById('pw');
+  var toggle = document.getElementById('toggle');
+  var clock = document.getElementById('clock');
+  var segEls = document.querySelectorAll('#segments .seg');
+  var rating = document.getElementById('rating');
+  var chips = document.getElementById('chips');
+  var scen = document.getElementById('scen');
+  var mLen = document.getElementById('mLen'), mPool = document.getElementById('mPool'), mBits = document.getElementById('mBits');
+  var sOnline = document.getElementById('sOnline'), sBcrypt = document.getElementById('sBcrypt'), sGpu = document.getElementById('sGpu');
+
+  var COMMON = new Set([
+    'passwort','passwort1','passwort123','password','password1','123456','1234567','12345678','123456789','1234567890',
+    'qwertz','qwertzuiop','qwerty','asdf','asdfgh','hallo','hallo123','willkommen','admin','administrator','letmein',
+    'sonnenschein','sonne','schatz','engel','berlin','muenchen','deutschland','fussball','iloveyou','master','monkey',
+    'sommer','sommer2024','sommer2025','winter','frühling','geheim','test','test123','starwars','superman','dragon',
+    '000000','111111','abc123','a1b2c3','ichliebedich','arschloch','blabla','janein','peter','martin','sabine','fckgw'
+  ]);
+  var WORDS = ['passwort','hallo','sommer','winter','sonne','liebe','schatz','engel','berlin','deutschland','fussball','geheim','willkommen','admin','test','montag','januar'];
+
+  function log2(x){ return Math.log(x)/Math.LN2; }
+
+  function hasSequence(s){
+    var seqs = ['abcdefghijklmnopqrstuvwxyz','0123456789','qwertzuiopü','asdfghjkl','yxcvbnm'];
+    s = s.toLowerCase();
+    for (var q=0; q<seqs.length; q++){
+      var line = seqs[q], rev = line.split('').reverse().join('');
+      for (var i=0; i<=s.length-3; i++){
+        var tri = s.substr(i,3);
+        if (line.indexOf(tri) !== -1 || rev.indexOf(tri) !== -1) return true;
+      }
+    }
+    return false;
+  }
+
+  function estimate(pw){
+    var pool = 0;
+    if (/[a-z]/.test(pw)) pool += 26;
+    if (/[A-ZÄÖÜ]/.test(pw)) pool += 26;
+    if (/[a-zäöü]/.test(pw) && /[äöüß]/.test(pw)) pool += 3;
+    if (/[0-9]/.test(pw)) pool += 10;
+    if (/[^a-zA-Z0-9äöüÄÖÜß]/.test(pw)) pool += 33;
+    if (pool === 0) pool = 1;
+
+    var bits = pw.length * log2(pool);
+    var lower = pw.toLowerCase();
+    var flags = { common:false, sequence:false, repeat:false, onlyDigits:false, year:false, word:false, short:false };
+
+    if (COMMON.has(lower)) { bits = Math.min(bits, 8); flags.common = true; }
+    if (/(.)\1{2,}/.test(pw)) { bits *= 0.7; flags.repeat = true; }
+    if (hasSequence(pw)) { bits *= 0.78; flags.sequence = true; }
+    if (/^\d+$/.test(pw)) { bits *= 0.8; flags.onlyDigits = true; }
+    if (/(19|20)\d{2}/.test(pw)) { bits *= 0.9; flags.year = true; }
+    for (var w=0; w<WORDS.length; w++){ if (lower.indexOf(WORDS[w]) !== -1){ bits = Math.min(bits, bits*0.55); flags.word = true; break; } }
+    if (pw.length < 8) flags.short = true;
+
+    bits = Math.max(bits, 0);
+    var guesses = Math.pow(2, Math.max(bits - 1, 0));
+    return { bits: bits, pool: pool, guesses: guesses, flags: flags, len: pw.length };
+  }
+
+  function humanTime(seconds){
+    if (seconds < 0.001) return 'sofort';
+    var min=60, hr=3600, day=86400, mon=2629800, yr=31557600;
+    function n(v){ return Math.round(v).toLocaleString('de-DE'); }
+    if (seconds < 1) return 'sofort';
+    if (seconds < min) return n(seconds) + ' Sek.';
+    if (seconds < hr) return n(seconds/min) + ' Min.';
+    if (seconds < day) return n(seconds/hr) + ' Std.';
+    if (seconds < mon) return n(seconds/day) + ' Tage';
+    if (seconds < yr) return n(seconds/mon) + ' Monate';
+    if (seconds < yr*100) return n(seconds/yr) + ' Jahre';
+    if (seconds < yr*1000) return n(seconds/yr/100) + ' Jahrhunderte';
+    if (seconds < yr*1e6) return n(seconds/yr/1000) + ' Jahrtausende';
+    return 'praktisch unknackbar';
+  }
+
+  // 5-step tier by entropy bits
+  function tier(bits){
+    if (bits < 28)  return { i:0, label:'Sehr schwach', color:'var(--weak)' };
+    if (bits < 40)  return { i:1, label:'Schwach',      color:'var(--weak)' };
+    if (bits < 60)  return { i:2, label:'Mittel',       color:'var(--fair)' };
+    if (bits < 90)  return { i:3, label:'Stark',        color:'var(--strong)' };
+    return              { i:4, label:'Sehr stark',   color:'var(--strong)' };
+  }
+
+  function buildChips(f, len){
+    var out = [];
+    if (f.common) out.push(['warn','Dieses Passwort steht auf jeder Angreifer-Liste. Es fällt sofort.']);
+    if (f.word)   out.push(['warn','Ein erkennbares Wort steckt darin – Wörterbuch-Angriffe zielen genau darauf.']);
+    if (f.sequence) out.push(['warn','Tastatur- oder Zeichenfolge erkannt (z. B. „qwertz“, „123“).']);
+    if (f.repeat) out.push(['warn','Wiederholte Zeichen erhöhen die Sicherheit kaum.']);
+    if (f.onlyDigits) out.push(['warn','Nur Ziffern – der Suchraum ist winzig.']);
+    if (f.year) out.push(['warn','Eine Jahreszahl ist leicht zu erraten.']);
+    if (f.short && !f.common) out.push(['warn','Unter 12 Zeichen wird es schnell knapp. Länge ist der stärkste Hebel.']);
+    if (len >= 16 && !f.common && !f.word) out.push(['good','Sehr gute Länge – der wichtigste Faktor überhaupt.']);
+    if (out.length === 0) out.push(['good','Keine offensichtlichen Schwächen erkannt. Länge weiter ausbauen lohnt sich immer.']);
+    return out.slice(0, 4);
+  }
+
+  function render(){
+    var pw = input.value;
+    if (!pw){
+      clock.innerHTML = '<span class="empty">– –</span>';
+      segEls.forEach(function(s){ s.style.background = 'var(--cream-deep)'; });
+      rating.style.display = 'none';
+      scen.style.display = 'none';
+      chips.innerHTML = '';
+      mLen.textContent = '0'; mPool.textContent = '0'; mBits.textContent = '0';
+      return;
+    }
+    var e = estimate(pw);
+    var t = tier(e.bits);
+    var gpu = e.guesses / 1e11;
+
+    clock.textContent = humanTime(gpu);
+    clock.style.color = t.color;
+
+    segEls.forEach(function(s, i){ s.style.background = i <= t.i ? t.color : 'var(--cream-deep)'; });
+
+    rating.style.display = 'inline-block';
+    rating.textContent = t.label;
+    rating.style.background = t.color;
+
+    mLen.textContent = e.len;
+    mPool.textContent = e.pool;
+    mBits.textContent = Math.round(e.bits);
+
+    var list = buildChips(e.flags, e.len);
+    chips.innerHTML = list.map(function(c){
+      return '<div class="chip ' + c[0] + '"><span class="mark">' + (c[0]==='good'?'✓':'!') + '</span><span>' + c[1] + '</span></div>';
+    }).join('');
+
+    scen.style.display = 'block';
+    sOnline.textContent = humanTime(e.guesses / 1e3);
+    sBcrypt.textContent = humanTime(e.guesses / 1e4);
+    sGpu.textContent = humanTime(gpu);
+  }
+
+  input.addEventListener('input', render);
+  toggle.addEventListener('click', function(){
+    var masked = input.type === 'password';
+    input.type = masked ? 'text' : 'password';
+    toggle.textContent = masked ? 'Verbergen' : 'Anzeigen';
+    toggle.setAttribute('aria-pressed', String(!masked));
+    input.focus();
+  });
+})();
+</script>
+</body>
+</html>
