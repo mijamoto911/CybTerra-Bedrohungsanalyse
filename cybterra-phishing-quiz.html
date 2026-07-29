@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phishing erkennen — CybTerra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --oxblood: #340B09;
+    --oxblood-soft: #5A1512;
+    --cream: #EFEDE8;
+    --cream-deep: #E4E0D7;
+    --paper: #F7F5F0;
+    --ink-60: rgba(52, 11, 9, 0.60);
+    --ink-40: rgba(52, 11, 9, 0.40);
+    --hairline: rgba(52, 11, 9, 0.14);
+    --danger: #9E2B25;
+    --safe:   #4A6B4D;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+
+  .cybt-q {
+    font-family: "Poppins", system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--oxblood);
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 28px 48px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .cybt-q .eyebrow {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-60); margin: 0 0 14px;
+  }
+  .cybt-q h1 {
+    font-size: clamp(1.7rem, 5vw, 2.4rem); font-weight: 600; line-height: 1.08; letter-spacing: -0.02em; margin: 0 0 14px;
+  }
+  .cybt-q .lede { font-size: 1.02rem; color: var(--ink-60); margin: 0 0 30px; max-width: 48ch; }
+
+  .cybt-q .btn {
+    font-family: "Poppins", sans-serif; font-size: 0.92rem; font-weight: 600; letter-spacing: 0.02em;
+    cursor: pointer; border-radius: 2px; padding: 14px 26px; border: 1.5px solid var(--oxblood);
+    background: var(--oxblood); color: var(--cream); transition: opacity 0.15s ease, background 0.15s ease;
+  }
+  .cybt-q .btn:hover { opacity: 0.88; }
+  .cybt-q .btn.ghost { background: transparent; color: var(--oxblood); }
+  .cybt-q .btn.ghost:hover { background: rgba(52,11,9,0.06); opacity: 1; }
+  .cybt-q .btn:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 2px; }
+
+  .cybt-q .progress { display: flex; gap: 5px; margin: 0 0 24px; }
+  .cybt-q .pdot { height: 4px; flex: 1; border-radius: 1px; background: var(--cream-deep); transition: background 0.2s ease; }
+  .cybt-q .pdot.done { background: var(--oxblood); }
+  .cybt-q .pdot.current { background: var(--oxblood-soft); }
+
+  .cybt-q .counter { font-family: var(--mono); font-size: 0.78rem; color: var(--ink-60); margin: 0 0 8px; letter-spacing: 0.04em; }
+
+  .cybt-q .mail {
+    background: var(--paper); border: 1px solid var(--hairline); border-radius: 3px;
+    overflow: hidden; margin: 0 0 22px;
+  }
+  .cybt-q .mail .head { padding: 16px 18px; border-bottom: 1px solid var(--hairline); }
+  .cybt-q .mail .row { display: flex; gap: 10px; font-size: 0.86rem; margin: 0 0 6px; align-items: baseline; }
+  .cybt-q .mail .row:last-child { margin-bottom: 0; }
+  .cybt-q .mail .k { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-40); flex: none; width: 58px; padding-top: 2px; }
+  .cybt-q .mail .v { color: var(--oxblood); }
+  .cybt-q .mail .name { font-weight: 600; }
+  .cybt-q .mail .addr { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-60); }
+  .cybt-q .mail .subject { font-size: 1.05rem; font-weight: 600; }
+  .cybt-q .mail .body { padding: 18px; font-size: 0.94rem; color: var(--oxblood); white-space: pre-line; }
+  .cybt-q .mail .attach {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
+    font-family: var(--mono); font-size: 0.82rem; color: var(--oxblood);
+    border: 1px dashed var(--ink-40); border-radius: 2px; padding: 7px 12px;
+  }
+  .cybt-q .mail a.link {
+    color: var(--oxblood-soft); text-decoration: underline; text-underline-offset: 2px;
+    font-weight: 500; cursor: help; position: relative;
+  }
+  .cybt-q .reveal-note {
+    display: inline-block; font-family: var(--mono); font-size: 0.74rem; color: var(--ink-60);
+    background: var(--cream-deep); border-radius: 2px; padding: 2px 7px; margin-top: 8px;
+  }
+  .cybt-q .reveal-note b { color: var(--danger); font-weight: 600; }
+  .cybt-q .reveal-note.ok b { color: var(--safe); }
+
+  .cybt-q .choices { display: flex; gap: 12px; }
+  .cybt-q .choices .btn { flex: 1; }
+
+  .cybt-q .verdict { border: 1px solid var(--hairline); border-radius: 3px; padding: 20px; margin: 0 0 22px; }
+  .cybt-q .verdict .tag {
+    display: inline-block; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--cream); padding: 4px 11px; border-radius: 2px; margin: 0 0 12px;
+  }
+  .cybt-q .verdict.correct { border-color: var(--safe); }
+  .cybt-q .verdict.correct .tag { background: var(--safe); }
+  .cybt-q .verdict.wrong { border-color: var(--danger); }
+  .cybt-q .verdict.wrong .tag { background: var(--danger); }
+  .cybt-q .verdict h3 { margin: 0 0 12px; font-size: 1.05rem; font-weight: 600; }
+  .cybt-q .signals { list-style: none; padding: 0; margin: 0; }
+  .cybt-q .signals li { display: flex; gap: 10px; font-size: 0.9rem; padding: 8px 0; border-top: 1px solid var(--hairline); }
+  .cybt-q .signals li:first-child { border-top: none; }
+  .cybt-q .signals .mk { font-family: var(--mono); font-weight: 700; flex: none; color: var(--oxblood-soft); }
+  .cybt-q .signals li b { font-weight: 600; }
+
+  .cybt-q .score-big { font-family: var(--mono); font-size: clamp(3rem, 14vw, 5rem); font-weight: 500; line-height: 1; letter-spacing: -0.03em; margin: 0 0 4px; }
+  .cybt-q .score-sub { font-size: 1rem; color: var(--ink-60); margin: 0 0 26px; }
+  .cybt-q .debrief { border-top: 1px solid var(--hairline); padding-top: 22px; margin: 0 0 26px; }
+  .cybt-q .debrief h3 { font-size: 0.9rem; font-weight: 600; letter-spacing: 0.02em; margin: 0 0 14px; }
+  .cybt-q .debrief li { display: flex; gap: 10px; font-size: 0.92rem; padding: 9px 0; border-top: 1px solid var(--hairline); list-style: none; }
+  .cybt-q .debrief ul { padding: 0; margin: 0; }
+  .cybt-q .debrief .mk { font-family: var(--mono); font-weight: 700; color: var(--oxblood-soft); flex: none; }
+  .cybt-q .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .cybt-q .hidden { display: none; }
+  @media (max-width: 480px) {
+    .cybt-q { padding: 30px 18px 40px; }
+    .cybt-q .choices { flex-direction: column; }
+    .cybt-q .mail .k { width: 50px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cybt-q * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="cybt-q">
+  <p class="eyebrow">CybTerra · Selbsttest</p>
+
+  <div id="intro">
+    <h1>Echt oder gefälscht? Erkennen Sie die Falle.</h1>
+    <p class="lede">Fünf E-Mails, wie sie täglich in Postfächern landen — jedes Mal eine neue Auswahl. Ihre Aufgabe: legitim oder Phishing? Fahren Sie mit der Maus über Links (oder tippen Sie sie an), um das echte Ziel zu sehen. Am Ende sehen Sie, welche Signale entscheidend waren.</p>
+    <button class="btn" id="startBtn" type="button">Test starten</button>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <div class="progress" id="progress"></div>
+    <p class="counter" id="counter"></p>
+    <div id="mailMount"></div>
+    <div class="choices" id="choices">
+      <button class="btn ghost" type="button" data-choice="legit">Legitim</button>
+      <button class="btn" type="button" data-choice="phish">Phishing</button>
+    </div>
+    <div id="verdictMount"></div>
+    <div id="nextMount"></div>
+  </div>
+
+  <div id="result" class="hidden">
+    <p class="eyebrow">Ergebnis</p>
+    <p class="score-big" id="scoreBig">0/5</p>
+    <p class="score-sub" id="scoreSub"></p>
+    <div class="debrief">
+      <h3>Die Merkmale, auf die es ankommt</h3>
+      <ul>
+        <li><span class="mk">&rarr;</span><span><b>Absenderadresse</b> — nicht der Anzeigename zählt, sondern die echte Adresse dahinter. Tippfehler-Domains und private Adressen sind Warnzeichen.</span></li>
+        <li><span class="mk">&rarr;</span><span><b>Link-Ziel</b> — der sichtbare Text kann alles behaupten. Entscheidend ist, wohin er wirklich führt.</span></li>
+        <li><span class="mk">&rarr;</span><span><b>Druck &amp; Drohung</b> — Fristen, Sperren, rechtliche Schritte. Dringlichkeit schaltet das Nachdenken ab. Genau das ist die Absicht.</span></li>
+        <li><span class="mk">&rarr;</span><span><b>Ungewöhnliche Bitte</b> — Zugangsdaten, Codes, Überweisungen, Geheimhaltung. Seriöse Stellen fragen das nicht per E-Mail ab.</span></li>
+        <li><span class="mk">&rarr;</span><span><b>Unerwarteter Anhang</b> — besonders .zip oder Office-Dateien mit Makros. Im Zweifel nicht öffnen.</span></li>
+      </ul>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" id="againBtn" type="button">Neue Runde</button>
+      <a class="btn" id="ctaBtn" href="#" target="_blank" rel="noopener">Team-Schulung ansehen</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var POOL = [
+    // ---------------- PHISHING ----------------
+    { verdict:'phish', name:'Microsoft 365', addr:'security@micrsoft-support.com',
+      subject:'Ihr Passwort läuft in 24 Stunden ab',
+      body:'Sehr geehrter Nutzer,\n\naus Sicherheitsgründen läuft Ihr Passwort in 24 Stunden ab. Bestätigen Sie jetzt Ihre Anmeldedaten, um eine Sperrung Ihres Kontos zu vermeiden.',
+      linkText:'https://login.microsoft365.com/verify', linkReal:'http://micrsoft-support.com/login-verify',
+      signals:[['Absender','Die Domain <b>micrsoft-support.com</b> ahmt Microsoft nur nach (fehlendes „o“).'],['Link','Text zeigt „microsoft365.com“, das echte Ziel ist eine Fremd-Domain.'],['Druck','24-Stunden-Frist plus Sperrandrohung.'],['Anrede','„Sehr geehrter Nutzer“ statt Ihres Namens.']] },
+
+    { verdict:'phish', name:'Andreas Vogel (Geschäftsführung)', addr:'andreas.vogel.ceo@gmail.com',
+      subject:'Kurze vertrauliche Bitte',
+      body:'Sind Sie am Platz?\n\nIch stecke gerade in einem Termin und brauche kurzfristig eine Überweisung an einen neuen Lieferanten. Bitte behandeln Sie das diskret – ich schicke gleich die Kontodaten. Antworten Sie bitte nur mir direkt.',
+      linkText:null, linkReal:null,
+      signals:[['Absender','Angeblich die Geschäftsführung – aber eine <b>private gmail.com</b>, nicht die Firmendomain.'],['Autorität + Eile','Chef-Rolle, Zeitdruck und Geheimhaltung: das Muster des CEO-Betrugs.'],['Ungewöhnliche Bitte','Spontane Überweisung, am normalen Prozess vorbei.'],['Isolation','„Antworten Sie nur mir“ soll Rückfragen verhindern.']] },
+
+    { verdict:'phish', name:'Buchhaltung', addr:'buchhaltung@rechnung-service24.net',
+      subject:'Offene Rechnung Nr. 2026-4471 – 2. Mahnung',
+      body:'Sehr geehrte Damen und Herren,\n\ntrotz mehrfacher Erinnerung ist die beigefügte Rechnung weiterhin offen. Wir bitten um Begleichung innerhalb von 48 Stunden. Andernfalls leiten wir rechtliche Schritte ein.\n\nDie Einzelheiten entnehmen Sie dem Anhang.',
+      linkText:null, linkReal:null, attach:'Rechnung_2026-4471.zip',
+      signals:[['Absender','Fremde, generische Domain <b>rechnung-service24.net</b>.'],['Unerwartet','„Mahnung“ für eine Rechnung, die Sie nie erhalten haben.'],['Drohung','48-Stunden-Frist plus „rechtliche Schritte“.'],['Anhang','Eine <b>.zip</b>-Datei ist ein häufiger Schadsoftware-Träger.']] },
+
+    { verdict:'phish', name:'DHL Paket', addr:'service@dhl-zustellung-info.com',
+      subject:'Ihr Paket konnte nicht zugestellt werden',
+      body:'Guten Tag,\n\nIhr Paket wartet in unserem Verteilzentrum. Zur erneuten Zustellung ist eine offene Servicegebühr von 2,99 € zu begleichen. Bitte bestätigen Sie Ihre Adresse innerhalb von 48 Stunden, sonst geht die Sendung zurück.',
+      linkText:'https://www.dhl.de/nachzahlung', linkReal:'http://dhl-zustellung-info.com/pay',
+      signals:[['Absender','<b>dhl-zustellung-info.com</b> gehört nicht zu DHL.'],['Kleinbetrag','Winzige „Gebühr“ von 2,99 € senkt die Hemmschwelle – Ziel sind Kartendaten.'],['Link','Sichtbar „dhl.de“, echtes Ziel die Fremd-Domain.'],['Druck','48-Stunden-Frist mit Rücksendungs-Drohung.']] },
+
+    { verdict:'phish', name:'PayPal', addr:'service@paypal-sicherheit.de',
+      subject:'Ungewöhnliche Aktivität – Ihr Konto wurde eingeschränkt',
+      body:'Sehr geehrter Kunde,\n\nwir haben eine ungewöhnliche Anmeldung festgestellt und Ihr Konto vorübergehend eingeschränkt. Bestätigen Sie Ihre Identität, um die volle Nutzung wiederherzustellen.',
+      linkText:'https://www.paypal.com/de/signin', linkReal:'http://paypal-sicherheit.de/login',
+      signals:[['Absender','<b>paypal-sicherheit.de</b> ist nicht paypal.com.'],['Anrede','„Sehr geehrter Kunde“ – PayPal nennt Ihren Namen.'],['Link','Angezeigter PayPal-Link führt auf eine Fremd-Domain.'],['Druck','Konto-„Einschränkung“ erzeugt Handlungsdruck.']] },
+
+    { verdict:'phish', name:'Ihre Sparkasse', addr:'sicherheit@sparkasse-kundenservice.net',
+      subject:'Neue gesetzliche Sicherheitsprüfung erforderlich',
+      body:'Sehr geehrte Kundin, sehr geehrter Kunde,\n\naufgrund neuer Vorschriften müssen alle Konten verifiziert werden. Bestätigen Sie Ihre Zugangsdaten und TAN, andernfalls wird Ihr Online-Banking gesperrt.',
+      linkText:'https://www.sparkasse.de/verifizierung', linkReal:'http://sparkasse-kundenservice.net/tan',
+      signals:[['Absender','Fremd-Domain <b>sparkasse-kundenservice.net</b>.'],['TAN-Abfrage','Keine Bank fragt Zugangsdaten oder TAN per E-Mail-Link ab.'],['Vorwand','Angebliche „neue Vorschrift“ als Druckmittel.'],['Drohung','Sperr-Androhung.']] },
+
+    { verdict:'phish', name:'MediaMarkt Aktion', addr:'gewinn@mm-vorteilswelt.info',
+      subject:'Herzlichen Glückwunsch! Ihr 500-€-Gutschein wartet',
+      body:'Sie wurden als Gewinner unserer Jubiläumsaktion ausgelost!\n\nUm Ihren 500-€-Gutschein zu erhalten, füllen Sie das kurze Formular aus und bestätigen Ihre Daten. Nur heute gültig.',
+      linkText:'https://www.mediamarkt.de/gewinn', linkReal:'http://mm-vorteilswelt.info/claim',
+      signals:[['Zu schön','Ein unerwarteter 500-€-Gewinn ohne Teilnahme ist der Klassiker.'],['Absender','<b>mm-vorteilswelt.info</b> hat nichts mit MediaMarkt zu tun.'],['Datenabfrage','„Daten bestätigen“ zielt auf persönliche Angaben.'],['Frist','„Nur heute gültig“ drängt zur Eile.']] },
+
+    { verdict:'phish', name:'Personalabteilung', addr:'hr@cybterra-portal.com',
+      subject:'Aktualisierung Ihrer Gehaltsdaten erforderlich',
+      body:'Liebe Kollegin, lieber Kollege,\n\nfür die Gehaltsabrechnung im August müssen alle Mitarbeitenden ihre Bankverbindung im Mitarbeiterportal bestätigen. Bitte melden Sie sich bis Freitag an.',
+      linkText:'https://portal.cybterra.de/login', linkReal:'http://cybterra-portal.com/login',
+      signals:[['Absender','<b>cybterra-portal.com</b> ist eine Fremd-Domain, nicht cybterra.de.'],['Link','Sichtbar die interne Domain, tatsächlich extern.'],['Ziel','Bankverbindung plus Login – wertvolle Beute.'],['Frist','„Bis Freitag“ erzeugt Druck.']] },
+
+    { verdict:'phish', name:'Microsoft SharePoint', addr:'no-reply@sharepoint-notify.com',
+      subject:'Ein Dokument wurde mit Ihnen geteilt: „Vertrag_final.pdf“',
+      body:'M. Krause hat ein Dokument mit Ihnen geteilt.\n\nÖffnen Sie „Vertrag_final.pdf“ über das sichere Portal. Für den Zugriff ist eine Anmeldung erforderlich.',
+      linkText:'Dokument öffnen', linkReal:'http://sharepoint-notify.com/auth',
+      signals:[['Absender','<b>sharepoint-notify.com</b> ist keine Microsoft-Domain.'],['Köder','Geteiltes Dokument, das zur Anmeldung zwingt – Zugangsdaten-Falle.'],['Link','„Dokument öffnen“ verbirgt eine Fremd-Domain.'],['Kontext','Unerwartete Freigabe von unbekannter Person.']] },
+
+    { verdict:'phish', name:'Sicherheitsdienst', addr:'alert@konto-schutz.net',
+      subject:'Anmeldeversuch bestätigen – Code 458 912',
+      body:'Wir haben einen Anmeldeversuch für Ihr Konto registriert.\n\nBitte antworten Sie mit dem Bestätigungscode 458 912 oder tippen Sie ihn auf der folgenden Seite ein, um den Zugriff zu genehmigen.',
+      linkText:'https://konto.sicherheit-login.net/ok', linkReal:'http://konto-schutz.net/collect',
+      signals:[['Code-Abfrage','Einen Bestätigungscode niemals weitergeben oder eintippen – er gehört nur in die echte App.'],['Absender','Generische Fremd-Domain <b>konto-schutz.net</b>.'],['Verwirrung','Ein unerwarteter Anmeldeversuch soll zur schnellen „Bestätigung“ verleiten.'],['Link','Führt auf eine gefälschte Seite.']] },
+
+    // ---------------- LEGITIM ----------------
+    { verdict:'legit', name:'IT-Abteilung', addr:'it-service@cybterra.de',
+      subject:'Geplante Wartung am Samstag, 02.08., 22:00–23:00 Uhr',
+      body:'Hallo zusammen,\n\nam Samstag aktualisieren wir das VPN-Gateway. In diesem Zeitfenster ist der Remote-Zugriff kurz nicht verfügbar. Es ist keine Aktion Ihrerseits nötig.\n\nBei Fragen wenden Sie sich wie gewohnt an das Service-Portal.',
+      linkText:null, linkReal:null,
+      signals:[['Absender','Interne, bekannte Domain <b>cybterra.de</b>.'],['Inhalt','Konkrete, nachvollziehbare Angaben (Datum, Zeitfenster, Grund).'],['Kein Druck','Keine Frist, keine Drohung, keine Klick-Aufforderung.'],['Keine Datenabfrage','Es werden keine Zugangsdaten verlangt.']] },
+
+    { verdict:'legit', name:'Telekom Deutschland', addr:'rechnung@telekom.de',
+      subject:'Ihre Rechnung für Juli 2026 ist da',
+      body:'Guten Tag,\n\nIhre aktuelle Mobilfunkrechnung steht bereit. Den fälligen Betrag buchen wir wie vereinbart per Lastschrift ab.\n\nSie finden die Rechnung wie immer in Ihrem Kundenkonto, das Sie über die offizielle Website aufrufen.',
+      linkText:null, linkReal:null,
+      signals:[['Absender','Korrekte Domain <b>telekom.de</b>, Rechnung erwartbar.'],['Erwartbar','Monatliche Rechnung – nichts Überraschendes.'],['Kein Login-Link','Verweist auf den gewohnten Weg statt auf einen Anmelde-Link.'],['Kein Anhang, kein Druck','Keine Datei, keine Frist, keine Drohung.']] },
+
+    { verdict:'legit', name:'Sabine Roth', addr:'s.roth@cybterra.de',
+      subject:'Einladung: Projekt-Update Donnerstag 14:00',
+      body:'Hallo,\n\nich lade euch zum wöchentlichen Projekt-Update ein. Die Agenda hängt an. Falls der Termin nicht passt, sagt kurz Bescheid.\n\nViele Grüße\nSabine',
+      linkText:null, linkReal:null, attach:'Update_Agenda.ics',
+      signals:[['Absender','Bekannte Kollegin, interne Domain <b>cybterra.de</b>.'],['Erwartbar','Wiederkehrender interner Termin.'],['Anhang','Eine .ics-Kalenderdatei ist hier üblich und passt zum Kontext – nicht jeder Anhang ist gefährlich.'],['Kein Druck','Persönliche Anrede, keine Datenabfrage.']] },
+
+    { verdict:'legit', name:'Amazon.de', addr:'versand-bestaetigung@amazon.de',
+      subject:'Ihre Bestellung wurde versandt',
+      body:'Guten Tag,\n\nIhre Bestellung wurde versandt und ist voraussichtlich morgen bei Ihnen. Den Lieferstatus sehen Sie jederzeit in Ihrem Konto unter „Meine Bestellungen“.\n\nVielen Dank für Ihren Einkauf.',
+      linkText:null, linkReal:null,
+      signals:[['Absender','Korrekte Domain <b>amazon.de</b>.'],['Erwartbar','Bezieht sich auf eine tatsächlich getätigte Bestellung.'],['Kein Login-Zwang','Verweist auf den gewohnten Weg statt auf einen Anmelde-Link.'],['Kein Druck','Keine Frist, keine Datenabfrage.']] },
+
+    { verdict:'legit', name:'heise Newsletter', addr:'newsletter@heise.de',
+      subject:'Bitte bestätigen Sie Ihre Anmeldung',
+      body:'Hallo,\n\nSie haben unseren IT-Newsletter abonniert. Zur Bestätigung klicken Sie bitte auf den Link. Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach – dann passiert nichts.',
+      linkText:'https://www.heise.de/newsletter/bestaetigen', linkReal:'https://www.heise.de/newsletter/bestaetigen',
+      signals:[['Absender','Korrekte Domain <b>heise.de</b>.'],['Link stimmt','Angezeigtes und tatsächliches Ziel sind identisch.'],['Erwartbar','Sie haben die Anmeldung selbst ausgelöst (Double-Opt-in).'],['Kein Zwang','Keine Drohung; Nichtstun hat keine Folgen.']] },
+
+    { verdict:'legit', name:'Bundesamt für Sicherheit in der Informationstechnik', addr:'no-reply@bsi.bund.de',
+      subject:'Eingangsbestätigung Ihrer NIS2-Registrierung',
+      body:'Sehr geehrte Damen und Herren,\n\nwir bestätigen den Eingang Ihrer Registrierung als betroffene Einrichtung. Ihre Vorgangsnummer finden Sie in Ihrem Konto im Meldeportal. Diese E-Mail dient ausschließlich der Information; eine Antwort ist nicht erforderlich.',
+      linkText:null, linkReal:null,
+      signals:[['Absender','Offizielle Behörden-Domain <b>bsi.bund.de</b>.'],['Keine Datenabfrage','Reine Eingangsbestätigung – keine Zugangsdaten verlangt.'],['Kein Link-Zwang','Verweist auf das bekannte Portal, ohne zum Klick zu drängen.'],['Nüchtern','Sachlicher Ton, keine Dringlichkeit.']] }
+  ];
+
+  var QUIZ_SIZE = 5;
+  var idx = 0, score = 0, answered = false, lastKey = '';
+  var EMAILS = [];
+
+  var intro = document.getElementById('intro');
+  var quiz = document.getElementById('quiz');
+  var result = document.getElementById('result');
+  var progress = document.getElementById('progress');
+  var counter = document.getElementById('counter');
+  var mailMount = document.getElementById('mailMount');
+  var choices = document.getElementById('choices');
+  var verdictMount = document.getElementById('verdictMount');
+  var nextMount = document.getElementById('nextMount');
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function shuffle(a){
+    for (var i=a.length-1; i>0; i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+
+  function selectEmails(){
+    var phish = POOL.filter(function(m){ return m.verdict==='phish'; });
+    var legit = POOL.filter(function(m){ return m.verdict==='legit'; });
+    var set = [];
+    for (var tries=0; tries<15; tries++){
+      var nPhish = Math.random() < 0.5 ? 3 : 2;
+      var nLegit = QUIZ_SIZE - nPhish;
+      if (nLegit > legit.length){ nLegit = legit.length; nPhish = QUIZ_SIZE - nLegit; }
+      if (nPhish > phish.length){ nPhish = phish.length; nLegit = QUIZ_SIZE - nPhish; }
+      var pick = shuffle(phish.slice()).slice(0, nPhish).concat(shuffle(legit.slice()).slice(0, nLegit));
+      shuffle(pick);
+      var key = pick.map(function(m){ return m.addr + '|' + m.subject; }).join('||');
+      set = pick;
+      if (key !== lastKey){ lastKey = key; break; }
+    }
+    return set;
+  }
+
+  function buildProgress(){
+    progress.innerHTML = '';
+    for (var i=0; i<EMAILS.length; i++){
+      var d = document.createElement('div');
+      d.className = 'pdot' + (i < idx ? ' done' : (i === idx ? ' current' : ''));
+      progress.appendChild(d);
+    }
+  }
+
+  function renderMail(){
+    var m = EMAILS[idx];
+    var linkHtml = '';
+    if (m.linkText){
+      var mismatch = m.linkReal !== m.linkText;
+      linkHtml = '<div style="margin-top:14px">'
+        + '<a class="link" href="#" onclick="return false">' + esc(m.linkText) + '</a>'
+        + '<div><span class="reveal-note' + (mismatch ? '' : ' ok') + '">Tatsächliches Ziel: <b>' + esc(m.linkReal) + '</b></span></div>'
+        + '</div>';
+    }
+    var attachHtml = m.attach ? '<div><span class="attach">&#9635; ' + esc(m.attach) + '</span></div>' : '';
+    mailMount.innerHTML =
+      '<div class="mail">'
+      + '<div class="head">'
+      +   '<div class="row"><span class="k">Von</span><span class="v"><span class="name">' + esc(m.name) + '</span> <span class="addr">&lt;' + esc(m.addr) + '&gt;</span></span></div>'
+      +   '<div class="row"><span class="k">Betreff</span><span class="v subject">' + esc(m.subject) + '</span></div>'
+      + '</div>'
+      + '<div class="body">' + esc(m.body) + linkHtml + attachHtml + '</div>'
+      + '</div>';
+    counter.textContent = 'E-Mail ' + (idx+1) + ' von ' + EMAILS.length;
+  }
+
+  function showQuestion(){
+    answered = false;
+    buildProgress();
+    renderMail();
+    verdictMount.innerHTML = '';
+    nextMount.innerHTML = '';
+    choices.classList.remove('hidden');
+  }
+
+  function answer(choice){
+    if (answered) return;
+    answered = true;
+    choices.classList.add('hidden');
+    var m = EMAILS[idx];
+    var correct = (choice === m.verdict);
+    if (correct) score++;
+
+    var truth = m.verdict === 'phish' ? 'Phishing' : 'Legitim';
+    var head = correct ? 'Richtig erkannt.' : 'Knapp daneben.';
+    var sig = m.signals.map(function(s){
+      return '<li><span class="mk">' + esc(s[0]) + '</span><span>' + s[1] + '</span></li>';
+    }).join('');
+
+    verdictMount.innerHTML =
+      '<div class="verdict ' + (correct ? 'correct' : 'wrong') + '">'
+      + '<span class="tag">' + truth + '</span>'
+      + '<h3>' + head + ' Diese E-Mail ist ' + truth.toLowerCase() + '.</h3>'
+      + '<ul class="signals">' + sig + '</ul>'
+      + '</div>';
+
+    var label = (idx < EMAILS.length - 1) ? 'Nächste E-Mail' : 'Ergebnis ansehen';
+    nextMount.innerHTML = '<button class="btn" id="nextBtn" type="button">' + label + '</button>';
+    document.getElementById('nextBtn').addEventListener('click', next);
+  }
+
+  function next(){
+    if (idx < EMAILS.length - 1){
+      idx++; showQuestion();
+      if (quiz.scrollIntoView) quiz.scrollIntoView({behavior:'smooth', block:'start'});
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult(){
+    quiz.classList.add('hidden');
+    result.classList.remove('hidden');
+    document.getElementById('scoreBig').textContent = score + '/' + EMAILS.length;
+    var sub;
+    if (score === EMAILS.length) sub = 'Ausgezeichnet. Sie lesen die Signale, auf die es ankommt.';
+    else if (score >= 3) sub = 'Solide – aber die übersehenen Fälle sind genau die teuren.';
+    else sub = 'Das lässt sich trainieren. Die gute Nachricht: Die Merkmale wiederholen sich.';
+    document.getElementById('scoreSub').textContent = sub;
+  }
+
+  function startRound(){
+    EMAILS = selectEmails();
+    idx = 0; score = 0;
+    intro.classList.add('hidden');
+    result.classList.add('hidden');
+    quiz.classList.remove('hidden');
+    showQuestion();
+  }
+
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('.cybt-q a.link');
+    if (a){ e.preventDefault(); }
+  });
+  document.getElementById('startBtn').addEventListener('click', startRound);
+  document.getElementById('againBtn').addEventListener('click', startRound);
+  choices.addEventListener('click', function(e){
+    var b = e.target.closest('[data-choice]');
+    if (b) answer(b.getAttribute('data-choice'));
+  });
+})();
+</script>
+</body>
+</html>
