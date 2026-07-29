@@ -229,9 +229,10 @@ function renderQuestions(){
   var secs=sectionsA(),html='';
   secs.forEach(function(s){
     html+='<div class="rc-step"><div class="rc-step-title">'+s.n+' · '+s.t+'</div>';
-    s.q.forEach(function(q){
+    s.q.forEach(function(q,qi){
+      var num=s.n+'.'+(qi+1);
       var info=q.info?'<span class="rc-info" tabindex="0">i<span class="rc-tip">'+esc(q.info)+'</span></span>':'';
-      html+='<div class="rc-q"><div class="rc-q-text"><span class="rc-q-num">'+q.id+'</span><span>'+q.q+'</span>'+info+'</div><div class="rc-opts">';
+      html+='<div class="rc-q"><div class="rc-q-text"><span class="rc-q-num">'+num+'</span><span>'+q.q+'</span>'+info+'</div><div class="rc-opts">';
       OPTS.forEach(function(o){
         var on=ANS[q.id]===o.v;
         html+='<div class="rc-opt'+(on?' on':'')+'" data-qid="'+q.id+'" data-val="'+o.v+'"><span class="rc-opt-dot"></span>'+o.t+'</div>';
