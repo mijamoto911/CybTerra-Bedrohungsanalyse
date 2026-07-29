@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>cybterra · Security-Assessment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    @font-face{font-family:'Roboto', sans-serif;src:local('Suisse Intl Light'), local('SuisseIntl-Light');font-weight:300;font-style:normal;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:#c1c1c0 0%;font-family:roboto-bold,roboto,sans-serif;font-weight:300;color:#111;}
+    .rc{max-width:760px;margin:0 auto;padding:2rem 1.5rem;}
+    .rc-head{margin-bottom:1.5rem;}
+    .rc-logo{font-family:roboto-bold,roboto,sans-serif;font-weight:700;font-size:25px;color:#111;margin-bottom:4px;}
+    .rc-sub{font-size:12px;color:#666;line-height:1.5;}
+    .rc-step{background:#fff;border:0.5px solid #e0e0dc;border-radius:8px;padding:1.25rem;margin-bottom:1rem;}
+    .rc-step-title{font-size:12px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:#5C3C47;margin-bottom:1rem;}
+    .rc-grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+    .rc-field{display:flex;flex-direction:column;gap:5px;}
+    .rc-field label{font-size:12px;color:#111;}
+    .rc-field input,.rc-field select{font-family:roboto-bold,roboto,sans-serif;font-weight:300;font-size:12px;padding:8px 10px;border:0.5px solid #ccc;border-radius:8px;background:#fff;color:#666;width:100%;outline:none;}
+    .rc-field input:focus,.rc-field select:focus{border-color:#5C3C47;}
+    /* --- Fragen (im rc-check-Stil, aber Einfachauswahl) --- */
+    .rc-q{border-top:0.5px solid #e0e0dc;padding:.9rem 0;}
+    .rc-q:first-child{border-top:none;padding-top:0;}
+    .rc-q-text{font-size:12px;color:#111;line-height:1.4;margin-bottom:9px;display:flex;gap:6px;align-items:flex-start;}
+    .rc-q-num{color:#999;font-weight:500;flex-shrink:0;}
+    .rc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+    .rc-opt{display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;padding:8px 6px;border:0.5px solid #e0e0dc;border-radius:8px;background:#fff;transition:border-color .15s,background .15s;user-select:none;font-size:12px;color:#666;text-align:center;}
+    .rc-opt:hover{border-color:#bbb;}
+    .rc-opt.on{border-color:#5C3C47;background:#f9f4f6;color:#5C3C47;font-weight:500;}
+    .rc-opt-dot{width:12px;height:12px;border:1.5px solid #ccc;border-radius:50%;flex-shrink:0;}
+    .rc-opt.on .rc-opt-dot{background:#5C3C47;border-color:#5C3C47;box-shadow:inset 0 0 0 2px #fff;}
+    /* --- Info-Icon --- */
+    .rc-info{flex-shrink:0;width:15px;height:15px;border-radius:50%;border:1px solid #bbb;color:#999;font-size:10px;font-weight:700;font-style:italic;font-family:Georgia,serif;display:inline-flex;align-items:center;justify-content:center;cursor:help;position:relative;line-height:1;}
+    .rc-info:hover{border-color:#5C3C47;color:#5C3C47;}
+    .rc-info .rc-tip{visibility:hidden;opacity:0;position:absolute;left:50%;top:22px;transform:translateX(-50%);width:240px;max-width:66vw;background:#fff;color:#444;font-size:12px;font-weight:300;font-style:normal;font-family:'DM Sans',sans-serif;line-height:1.5;text-align:left;padding:10px 12px;border-radius:8px;border:0.5px solid #e0e0dc;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:20;transition:opacity .15s;pointer-events:none;}
+    .rc-info:hover .rc-tip,.rc-info:focus .rc-tip{visibility:visible;opacity:1;}
+    .rc-btn{width:50%;border:0.5px solid #e0e0dc;padding:12px;background:#5C3C47;color:#fff;border-radius:8px;font-size:12px;font-weight:500;font-family:roboto-bold,roboto,sans-serif;cursor:pointer;margin-top:.5rem;transition:background .15s;}
+    .rc-btn:hover{background:#5C3C47;background-color:#87aade;}
+    .rc-btn:disabled{opacity:.45;cursor:not-allowed;background:#5C3C47;}
+    .rc-results{border:0.5px solid #e0e0dc;border-radius:12px;overflow:hidden;margin-top:1.5rem;}
+    .rc-results-head{background:#5C3C47;padding:1rem 1.25rem;}
+    .rc-results-title{font-family:roboto-bold,roboto,sans-serif;font-size:16px;font-weight:700;color:#fff;}
+    .rc-results-company{font-size:12px;color:#d4b8c0;margin-top:2px;}
+    .rc-results-body{padding:1.25rem;}
+    .rc-total{display:flex;align-items:baseline;gap:10px;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:0.5px solid #e0e0dc;flex-wrap:wrap;}
+    .rc-total-num{font-family:roboto-bold,roboto,sans-serif;font-size:40px;font-weight:700;}
+    .rc-total-label{font-size:12px;color:#666;line-height:1.4;}
+    .rc-items{display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem;}
+    .rc-item{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+    .rc-item-label{font-size:12px;color:#666;min-width:180px;}
+    .rc-item-bar-wrap{flex:1;min-width:60px;height:6px;background:#f0f0ec;border-radius:3px;overflow:hidden;}
+    .rc-item-bar{height:100%;border-radius:3px;transition:width .6s ease;}
+    .rc-item-val{font-size:12px;font-weight:500;color:#666;min-width:52px;text-align:right;font-family:roboto-bold, roboto, sans-serif;}
+    .rc-risk-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem;}
+    .rc-risk{border-radius:8px;padding:.75rem;border:0.5px solid #e0e0dc;}
+    .rc-risk.high{background:#FCEBEB;border-color:#F09595;}
+    .rc-risk.med{background:#FAEEDA;border-color:#FAC775;}
+    .rc-risk.low{background:#EAF3DE;border-color:#C0DD97;}
+    .rc-risk-label{font-size:12px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;}
+    .rc-risk.high .rc-risk-label{color:#A32D2D;}.rc-risk.med .rc-risk-label{color:#854F0B;}.rc-risk.low .rc-risk-label{color:#3B6D11;}
+    .rc-risk-val{font-family:roboto-bold,roboto,sans-serif;font-size:20px;font-weight:700;margin:4px 0 2px;}
+    .rc-risk.high .rc-risk-val{color:#A32D2D;}.rc-risk.med .rc-risk-val{color:#854F0B;}.rc-risk.low .rc-risk-val{color:#3B6D11;}
+    .rc-risk-desc{font-size:12px;}
+    .rc-risk.high .rc-risk-desc{color:#791F1F;}.rc-risk.med .rc-risk-desc{color:#633806;}.rc-risk.low .rc-risk-desc{color:#27500A;}
+    .rc-section{margin-bottom:1.25rem;}
+    .rc-section-title{font-size:12px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#5C3C47;margin-bottom:8px;}
+    .rc-radar{display:flex;justify-content:center;background:#fbfafa;border:0.5px solid #e0e0dc;border-radius:8px;padding:.5rem;}
+    .rc-recs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:1.25rem;}
+    .rc-rec-card{border-radius:8px;border:0.5px solid #e0e0dc;padding:.875rem;background:#fff;}
+    .rc-rec-card.critical{border-left:3px solid #E24B4A;background:#FFF9F9;}
+    .rc-rec-card.important{border-left:3px solid #F5A623;background:#FFFDF5;}
+    .rc-rec-card.recommended{border-left:3px solid #5C3C47;background:#fdf8fa;}
+    .rc-rec-priority{font-size:12px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;}
+    .critical .rc-rec-priority{color:#E24B4A;}.important .rc-rec-priority{color:#854F0B;}.recommended .rc-rec-priority{color:#5C3C47;}
+    .rc-rec-title{font-size:12px;font-weight:500;color:#111;margin-bottom:3px;}
+    .rc-rec-desc{font-size:12px;color:#666;line-height:1.5;}
+    .rc-rec-tool{font-size:12px;color:#5C3C47;margin-top:5px;font-weight:500;}
+    .rc-compliance{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem;}
+    .rc-comp-tag{font-size:12px;font-weight:500;padding:10px;border-radius:8px;}
+    .comp-required{background:#FCEBEB;color:#A32D2D;border:0.5px solid #F09595;}
+    .comp-recommended{background:#FAEEDA;color:#854F0B;padding:15px 10px;border:0.5px solid #FAC775;}
+    .comp-optional{background:#f7f7f5;color:#666;padding:15px 10px;border:0.5px solid #e0e0dc;}
+    .rc-strengths{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem;}
+    .rc-str-tag{font-size:12px;font-weight:500;padding:8px 10px;border-radius:8px;background:#EAF3DE;color:#3B6D11;border:0.5px solid #C0DD97;}
+    .rc-cta{margin-top:1.25rem;background:#f7f7f5;border-radius:8px;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border:0.5px solid #e0e0dc;}
+    .rc-cta-text{font-size:12px;color:#666;}
+    .rc-cta-text small{display:block;font-size:12px;color:#666;margin-top:2px;}
+    .rc-cta-link{width:50%;border:0.5px solid #e0e0dc;padding:12px;background:#5C3C47;color:#fff;border-radius:8px;font-size:12px;font-weight:500;font-family:roboto-bold,roboto,sans-serif;cursor:pointer;margin-top:.5rem;transition:background .15s;text-align:center;text-decoration:none;display:inline-block;}
+    .rc-cta-link:hover{background:#5C3C47;background-color:#87aade;}
+    .rc-score-bar{margin-bottom:1.25rem;}
+    .rc-score-label{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px;}
+    .rc-score-track{height:8px;background:#f0f0ec;border-radius:4px;overflow:hidden;}
+    .rc-score-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+    .hidden{display:none!important;}
+    @media(max-width:500px){.rc-grid2,.rc-recs-grid,.rc-risk-row{grid-template-columns:1fr;}.rc-opts{grid-template-columns:repeat(2,1fr);}}
+  </style>
+</head>
+<body>
+<div class="rc">
+  <div class="rc-head">
+    <div class="rc-logo">cybterra · Security-Assessment</div>
+    <div class="rc-sub">Bewerten Sie Ihre IT-Sicherheit über acht Kernbereiche plus ein branchenspezifisches Fachmodul — und erhalten Sie Ihren Reifegrad samt konkreter Handlungsempfehlungen.</div>
+  </div>
+
+  <div class="rc-step">
+    <div class="rc-step-title">Über Ihr Unternehmen</div>
+    <div class="rc-grid2">
+      <div class="rc-field"><label>Unternehmen</label><input type="text" id="company" placeholder="z. B. Muster GmbH"/></div>
+      <div class="rc-field"><label>Branche</label>
+        <select id="branche">
+          <option value="">Bitte wählen…</option>
+          <option value="produktion">Industrie / Produktion</option>
+          <option value="gesundheit">Gesundheitswesen</option>
+          <option value="it">IT / Software</option>
+          <option value="handel">Handel / E-Commerce</option>
+          <option value="finanzen">Finanzen / Versicherung</option>
+          <option value="energie">Energie / Versorgung</option>
+          <option value="logistik">Logistik / Transport</option>
+          <option value="dienstleistung">Dienstleistung</option>
+          <option value="oeffentlich">Öffentlicher Sektor</option>
+          <option value="sonstige">Sonstige</option>
+        </select>
+      </div>
+      <div class="rc-field"><label>Ansprechpartner</label><input type="text" id="name" placeholder="Vor- und Nachname"/></div>
+      <div class="rc-field"><label>E-Mail (geschäftlich)</label><input type="email" id="email" placeholder="name@firma.de"/></div>
+    </div>
+  </div>
+
+  <div id="questions"></div>
+
+  <button class="rc-btn" id="calcBtn" onclick="calculate()">Auswertung berechnen →</button>
+  <div id="results" class="rc-results hidden"></div>
+</div>
+
+<script>
+var CONTACT={mail:"office@cybterra.com",contact:"https://cybterra.com/contact"};
+var OPTS=[{v:"ja",t:"Ja",val:2},{v:"teilweise",t:"Teilw.",val:1},{v:"nein",t:"Nein",val:0},{v:"na",t:"k. A.",val:null}];
+
+var BASE=[
+{id:"s1",n:"01",short:"Schwachstellen",t:"Sicherheitslücken & Patch-Management",bsig:"§ 30 Abs. 2 Nr. 5 BSIG",q:[
+{id:"1.1",q:"Haben Sie einen vollständigen Überblick über alle eingesetzte Software?",info:"Eine aktuelle Liste aller Programme und Systeme im Unternehmen – inkl. Version und Zuständigem. Nur was Sie kennen, können Sie schützen.",rec:"Zentrales Software- und Asset-Inventar mit Version und Verantwortlichem führen."},
+{id:"1.2",q:"Existiert ein definierter Prozess für Updates und Patches?",info:"Ein „Patch“ ist ein Sicherheitsupdate. Gefragt: gibt es eine feste Vorgehensweise, wer solche Updates wann einspielt – statt zufällig?",rec:"Patch-Prozess mit Zuständigkeiten, Testschritt und festen Wartungsfenstern dokumentieren."},
+{id:"1.3",q:"Werden Updates schnellstmöglich nach Veröffentlichung eingespielt?",info:"Sobald ein Update erscheint, kennen auch Angreifer die Lücke. Je schneller Sie einspielen, desto kleiner das Angriffsfenster.",rec:"Kritische Updates binnen 72 h einspielen, idealerweise automatisiert und nach CVSS priorisiert."},
+{id:"1.4",q:"Sind Quellen definiert, über die Sie über neue Schwachstellen informiert werden?",info:"Erfahren Sie aktiv von neuen Lücken? Z. B. über BSI-Warnmeldungen (CERT-Bund) oder Hinweise Ihrer Hersteller.",rec:"CERT-Bund-Meldungen des BSI und Hersteller-Advisories abonnieren, verantwortliche Rolle benennen."},
+{id:"1.5",q:"Sind administrative Rechte auf das Nötigste beschränkt?",info:"Admin-Rechte erlauben, alles zu ändern. Hat jeder sie, richtet ein gekapertes Konto großen Schaden an. Least Privilege = nur so viel Rechte wie nötig.",rec:"Lokale Admin-Rechte konsequent reduzieren (Least Privilege)."}]},
+{id:"s2",n:"02",short:"Zugänge",t:"Benutzerzugänge absichern",bsig:"§ 30 Abs. 2 Nr. 9/10 BSIG",q:[
+{id:"2.1",q:"Nutzen Sie eine Passwort-Richtlinie gemäß BSI-Empfehlung?",info:"Eine Vorgabe, wie Passwörter aussehen (Länge, Passwort-Manager). Das BSI empfiehlt lange Passwörter statt häufiger Wechsel.",rec:"Mindestlänge 12+, Passwort-Manager, keine erzwungenen periodischen Wechsel."},
+{id:"2.2",q:"Sind kritische Konten und Fernzugänge mit MFA / 2FA abgesichert?",info:"MFA = zweiter Bestätigungsschritt zusätzlich zum Passwort. Selbst gestohlene Passwörter nützen dem Angreifer dann nichts.",rec:"MFA verpflichtend für Admins, Fernzugriffe und Cloud; FIDO2/Passkeys bevorzugen."},
+{id:"2.3",q:"Sind Mitarbeitende sensibilisiert, Passwörter geheim zu halten?",info:"Wissen Ihre Mitarbeitenden, dass Passwörter nicht weitergegeben, aufgeschrieben oder mehrfach genutzt werden dürfen?",rec:"In Onboarding und jährlicher Schulung verankern: keine Weitergabe, keine Mehrfachnutzung."},
+{id:"2.4",q:"Existiert eine Zugangssicherung für mobile Geräte im Firmennetz?",info:"Smartphones/Laptops mit Firmenzugriff sollten gesperrt, verschlüsselt und bei Verlust löschbar sein (MDM).",rec:"MDM mit Verschlüsselung, Bildschirmsperre und Remote-Wipe einführen."},
+{id:"2.5",q:"Werden privilegierte Zugänge gesondert verwaltet und überwacht?",info:"„Privilegiert“ = Konten mit besonders weitreichenden Rechten (Admins). Diese brauchen extra Schutz und Protokollierung.",rec:"Privileged-Access-Management: separate Admin-Konten, Just-in-Time-Rechte, Protokollierung."}]},
+{id:"s3",n:"03",short:"Backup",t:"Datensicherung & Wiederherstellung",bsig:"§ 30 Abs. 2 Nr. 3 BSIG",q:[
+{id:"3.1",q:"Verfügen Sie über eine Sicherung der geschäftskritischen Daten?",info:"Ein Backup ist eine Sicherungskopie Ihrer wichtigsten Daten, aus der Sie im Notfall wiederherstellen können.",rec:"Geschäftskritische Daten identifizieren und systematisch sichern."},
+{id:"3.2",q:"Werden Backups auf mehreren unterschiedlichen Medien gesichert?",info:"Nicht alle Kopien am selben Ort. 3-2-1-Regel: 3 Kopien, 2 Medien, 1 außer Haus.",rec:"3-2-1-Regel: drei Kopien, zwei Medien, eine außer Haus."},
+{id:"3.3",q:"Ist mindestens ein Backup offline / unveränderbar (immutable)?",info:"Ein Backup, das nicht dauerhaft am Netz hängt. Ransomware verschlüsselt erreichbare Backups mit – die getrennte Kopie überlebt.",rec:"Offline- oder Immutable-Kopie vorhalten."},
+{id:"3.4",q:"Werden Wiederherstellung und Funktionsfähigkeit regelmäßig geübt?",info:"Wurde je getestet, ob sich aus dem Backup wirklich alles zurückholen lässt? Ein ungetestetes Backup ist unzuverlässig.",rec:"Wiederherstellung mind. halbjährlich testen und Recovery-Zeiten dokumentieren."},
+{id:"3.5",q:"Ist der Sicherungsturnus an die Geschäftskritikalität angepasst?",info:"Wie oft gesichert wird, sollte davon abhängen, wie viel Datenverlust Sie verkraften. Wichtige Daten → häufiger.",rec:"Sicherungshäufigkeit am tolerierbaren Datenverlust (RPO) ausrichten."}]},
+{id:"s4",n:"04",short:"Bewusstsein",t:"Gefahrenbewusstsein & Schulung",bsig:"§ 30 Abs. 2 Nr. 7 BSIG",q:[
+{id:"4.1",q:"Werden Sie zeitnah über aktuelle Gefahren informiert?",info:"Bekommen Sie mit, welche Angriffsarten gerade aktuell sind? Das BSI-Lagebild hilft dabei.",rec:"BSI-Lagebild und Branchen-CERT-Informationen nutzen, um gezielt zu priorisieren."},
+{id:"4.2",q:"Sind gängige Vorgehensweisen von Cyberkriminellen bekannt?",info:"Kennen Ihre Leute typische Maschen wie Phishing, CEO-Fraud (angeblicher Chef) oder Ransomware (Erpressung)?",rec:"Muster vermitteln: Phishing, CEO-Fraud, Ransomware, Lieferketten-Angriffe."},
+{id:"4.3",q:"Finden regelmäßig Schulungen statt?",info:"Regelmäßige kurze Sicherheitsschulungen für alle – der Mensch ist das häufigste Einfallstor.",rec:"Mindestens jährliche Awareness-Schulungen durchführen und dokumentieren."},
+{id:"4.4",q:"Werden simulierte Phishing-Kampagnen durchgeführt?",info:"Test-Phishing-Mails, die Sie selbst verschicken, um zu sehen, wer klickt – ohne echten Schaden.",rec:"Phishing-Simulationen einsetzen; Klickraten zeigen den Fortschritt."},
+{id:"4.5",q:"Gibt es eine niedrigschwellige Meldemöglichkeit für Verdachtsfälle?",info:"Ein einfacher Weg, verdächtige Mails zu melden (z. B. Button). Schnelle Meldungen verhindern größere Schäden.",rec:"Einfachen Melde-Weg schaffen."}]},
+{id:"s5",n:"05",short:"Netzwerk",t:"Netzübergänge & Netzwerksicherheit",bsig:"§ 30 Abs. 2 Nr. 1 BSIG",q:[
+{id:"5.1",q:"Verfügen Sie über eine dedizierte, restriktiv konfigurierte Firewall?",info:"Eine Firewall kontrolliert den Verkehr zwischen Ihrem Netz und dem Internet. „Restriktiv“ = nur ausdrücklich erlaubte Verbindungen.",rec:"Next-Generation-Firewall mit Default-Deny; Regelwerk dokumentieren."},
+{id:"5.2",q:"Sind kritische IT-Systeme vom restlichen Netz getrennt?",info:"Segmentierung: wichtige Systeme in eigene Netzbereiche. So kann ein befallener PC nicht das ganze Unternehmen infizieren.",rec:"Netz segmentieren (VLANs/Zonen); Alt- und Produktionssysteme trennen."},
+{id:"5.3",q:"Erfolgen externe Zugriffe nur über gesicherte Zugänge (VPN/ZTNA)?",info:"Zugriff von außen (Homeoffice, Wartung) sollte nur über einen verschlüsselten Tunnel (VPN) laufen – nicht offen im Internet.",rec:"Kein direkter RDP aus dem Internet; VPN mit MFA oder Zero-Trust-Access."},
+{id:"5.4",q:"Gibt es eine Übersicht aller externen Zugänge inkl. Berechtigungen?",info:"Wissen Sie, wer von außen auf Ihr Netz zugreifen kann und mit welchen Rechten? Vergessene Zugänge sind ein Risiko.",rec:"Register aller Fernzugänge führen und regelmäßig rezertifizieren."},
+{id:"5.5",q:"Ist Ihr WLAN sicher konfiguriert (Trennung Gast/Firma)?",info:"Gäste sollten ein eigenes WLAN nutzen, getrennt vom Firmennetz, mit aktueller Verschlüsselung (WPA3).",rec:"Gäste-WLAN trennen, WPA3 und starke Schlüssel verwenden."}]},
+{id:"s6",n:"06",short:"Malware",t:"Schadprogramme & E-Mail-Sicherheit",bsig:"§ 30 Abs. 2 Nr. 7/10 BSIG",q:[
+{id:"6.1",q:"Ist die Ausführung von Office-Makros technisch deaktiviert?",info:"Makros sind kleine Programme in Word/Excel-Dateien – ein klassischer Weg für Schadsoftware. Standardmäßig blockieren.",rec:"Makros per Gruppenrichtlinie deaktivieren, nur signierte zulassen."},
+{id:"6.2",q:"Werden externe E-Mails explizit gekennzeichnet?",info:"Ein Hinweis-Banner „Externe E-Mail“ bei Nachrichten von außerhalb. Hilft, gefälschte Mails zu erkennen.",rec:"External-Banner aktivieren."},
+{id:"6.3",q:"Ist die vollständige Absenderadresse sichtbar und geprüft?",info:"Verfahren (SPF/DKIM/DMARC) prüfen, ob eine Mail wirklich vom angegebenen Absender stammt.",rec:"SPF, DKIM und DMARC implementieren."},
+{id:"6.4",q:"Nutzen Sie eine aktuelle Antiviren- / EDR-Lösung?",info:"EDR ist die moderne Weiterentwicklung des Virenscanners: erkennt auch neue, unbekannte Angriffe.",rec:"Moderne EDR-Lösung mit zentralem Management statt reinem Signaturscanner."},
+{id:"6.5",q:"Ist ein Web- / DNS-Filter gegen bösartige Seiten aktiv?",info:"Ein Filter, der den Zugriff auf bekannte Schad- und Phishing-Webseiten automatisch blockiert.",rec:"DNS- oder Web-Filter einsetzen."}]},
+{id:"s7",n:"07",short:"Notfall",t:"Notfall- & Vorfallmanagement",bsig:"§ 30 Abs. 2 Nr. 2 BSIG",q:[
+{id:"7.1",q:"Haben Sie einen Notfallplan für IT-Sicherheitsvorfälle?",info:"Eine schriftliche Anleitung, was im Angriffsfall zu tun ist – wer was macht, in welcher Reihenfolge.",rec:"Incident-Response-Plan mit Erkennung, Eindämmung, Wiederanlauf, Nachbereitung."},
+{id:"7.2",q:"Wird eine Notfallübung regelmäßig durchgeführt?",info:"Ein Durchspielen des Ernstfalls „auf dem Papier“ (Table-Top). Erst die Übung zeigt, ob der Plan funktioniert.",rec:"Mindestens jährlich eine Table-Top-Übung durchführen."},
+{id:"7.3",q:"Enthält der Plan einen Kommunikationsplan (intern & extern)?",info:"Eine Notfall-Kontaktliste (IT-DL, Polizei, Datenschutzaufsicht, Kunden) – offline verfügbar, mit Mobilnummern.",rec:"Kontakte offline vorhalten (IT-DL, Polizei, Datenschutzaufsicht, Kunden, Mobilnummern)."},
+{id:"7.4",q:"Gibt es eine klare Rollen- und Aufgabenzuweisung?",info:"Ist festgelegt, wer im Notfall welche Rolle übernimmt (Leitung, Technik, Kommunikation) – inkl. Vertretung?",rec:"Feste Rollen mit Stellvertretung definieren."},
+{id:"7.5",q:"Ist der NIS2-Meldeweg (24 h / 72 h / 1 Monat) vorbereitet?",info:"NIS2-pflichtige Unternehmen müssen erhebliche Vorfälle in festen Fristen ans BSI melden (24 h Frühwarnung, 72 h Meldung, 1 Monat Bericht).",rec:"Meldeprozess ans BSI vorab definieren."}]},
+{id:"s8",n:"08",short:"Dokumentation",t:"Inventarisierung & Dokumentation",bsig:"§ 30 Abs. 2 Nr. 1 BSIG",q:[
+{id:"8.1",q:"Verfügen Sie über eine dokumentierte Übersicht Ihrer IT-Landschaft?",info:"Ein aktueller Überblick über Systeme, Verbindungen und Außenanbindungen – wie ein Bauplan Ihrer IT.",rec:"Aktuellen Netz- und Systemplan pflegen."},
+{id:"8.2",q:"Ist dokumentiert, welche Zugänge zu Systemen bestehen?",info:"Eine Übersicht, wer auf welche Systeme Zugriff hat – Grundlage für saubere Rechtevergabe.",rec:"Berechtigungskonzept dokumentieren."},
+{id:"8.3",q:"Sind Anwendungen inkl. Abhängigkeiten erfasst?",info:"Nicht nur Programme, sondern auch wovon sie abhängen (Datenflüsse) – wichtig für die Notfallwiederherstellung.",rec:"Anwendungen und Datenflüsse erfassen."},
+{id:"8.4",q:"Werden diese Dokumentationen regelmäßig aktualisiert?",info:"Veraltete Dokumentation kann im Ernstfall schlimmer sein als keine. Ein fester Rhythmus hält sie brauchbar.",rec:"Festen Review-Zyklus festlegen (mind. jährlich)."},
+{id:"8.5",q:"Sind Daten nach Schutzbedarf klassifiziert?",info:"Einteilung der Daten nach Wichtigkeit (öffentlich, intern, vertraulich), um Schutzmaßnahmen passend zu wählen.",rec:"Datenklassifizierung einführen."}]}
+];
+var MODULES={
+produktion:{id:"mprod",n:"09",short:"OT-Sicherheit",t:"OT- & Produktionssicherheit",bsig:"Branchenspezifisch",q:[
+{id:"P.1",q:"Sind Produktionsnetze (OT) strikt vom Office-Netz (IT) getrennt?",info:"OT = Maschinen- und Steuerungstechnik. Sie sollte vom Büronetz getrennt sein, damit ein Büro-Vorfall die Produktion nicht erreicht.",rec:"OT/IT-Segmentierung mit kontrollierten Übergängen umsetzen."},
+{id:"P.2",q:"Ist die Fernwartung von Maschinen abgesichert und protokolliert?",info:"Maschinenhersteller warten oft aus der Ferne. Diese Zugänge nur gezielt öffnen, absichern und protokollieren.",rec:"Herstellerfernzugriffe nur über gesicherte, zeitlich begrenzte Kanäle zulassen."},
+{id:"P.3",q:"Gibt es ein Inventar aller OT-/ICS-Komponenten?",info:"Eine Liste aller Steuerungen, SPS und Bediengeräte – Grundlage, um Schwachstellen zu bewerten.",rec:"Steuerungen, SPS und HMIs vollständig inventarisieren."},
+{id:"P.4",q:"Werden nicht patchbare Alt-Systeme kompensatorisch geschützt?",info:"Alte Maschinen lassen sich oft nicht updaten. Dann müssen sie abgeschottet und überwacht werden.",rec:"Legacy-Systeme durch Segmentierung und Monitoring kapseln."},
+{id:"P.5",q:"Wird der Netzwerkverkehr in der OT überwacht?",info:"Eine Überwachung, die ungewöhnliche Aktivität in der Produktionstechnik erkennt – ohne den Betrieb zu stören.",rec:"OT-taugliches Monitoring (Anomalieerkennung) einsetzen."},
+{id:"P.6",q:"Existiert ein Notfallplan speziell für Produktionsausfälle?",info:"Ein Plan, wie die Fertigung im IT-Notfall weiterläuft – z. B. mit manuellen Rückfallverfahren.",rec:"BCM für Fertigung mit manuellen Rückfallverfahren definieren."}]},
+gesundheit:{id:"mheal",n:"09",short:"Gesundheits-IT",t:"Gesundheits-IT & Patientendaten",bsig:"Art. 9 DSGVO",q:[
+{id:"H.1",q:"Werden Patientendaten (Art. 9 DSGVO) besonders geschützt?",info:"Gesundheitsdaten sind laut DSGVO besonders schützenswert – verschlüsselt und nur fürs Behandlungsteam zugänglich.",rec:"Gesundheitsdaten verschlüsseln, Zugriff auf das Behandlungsteam begrenzen."},
+{id:"H.2",q:"Ist die Sicherheit medizinischer Geräte bewertet?",info:"Vernetzte Medizingeräte können Lücken haben. Sie sollten erfasst, abgeschottet und aktuell gehalten werden.",rec:"Vernetzte Medizingeräte inventarisieren, segmentieren, auf Updates prüfen."},
+{id:"H.3",q:"Ist der Zugriff auf Patientenakten rollenbasiert und protokolliert?",info:"Nur wer eine Patientin behandelt, sollte deren Akte sehen – und jeder Zugriff wird protokolliert.",rec:"Zugriffe nach Behandlungskontext einschränken und protokollieren."},
+{id:"H.4",q:"Gibt es einen Notbetrieb bei IT-Ausfall?",info:"Ein Plan, wie die Patientenversorgung auch bei IT-Ausfall weiterläuft (manuelle Prozesse).",rec:"Manuelle Notfallprozesse definieren."},
+{id:"H.5",q:"Ist bekannt, ob Sie KRITIS-/NIS2-Schwellen erreichen?",info:"Gesundheitseinrichtungen fallen oft unabhängig von der Größe unter besondere Pflichten (KRITIS/NIS2).",rec:"Versorgungskennzahlen gegen KRITIS-Schwellen prüfen."},
+{id:"H.6",q:"Werden Zugänge ausgeschiedener Mitarbeitender zeitnah entzogen?",info:"Konten von Personen, die gegangen sind, müssen schnell deaktiviert werden. Bei hoher Fluktuation ein Kernrisiko.",rec:"Joiner-Mover-Leaver-Prozess etablieren."}]},
+it:{id:"mit",n:"09",short:"Secure Dev",t:"Sichere Software-Entwicklung & Betrieb",bsig:"NIS2 Lieferkette",q:[
+{id:"I.1",q:"Ist Sicherheit fester Bestandteil Ihres Entwicklungsprozesses (SSDLC)?",info:"„Security by Design“: Sicherheit von Anfang an mitdenken – Bedrohungsanalyse, Code-Reviews, Sicherheitstests.",rec:"Security by Design: Threat Modeling, Code-Reviews, Security-Tests verankern."},
+{id:"I.2",q:"Sind Ihre Code-Repositories und Zugänge abgesichert?",info:"Wo Ihr Code liegt (z. B. GitHub), braucht MFA und Zugriffsbeschränkung – keine Passwörter/Schlüssel im Code.",rec:"MFA, Branch-Protection, Least-Privilege; keine Secrets im Code."},
+{id:"I.3",q:"Verwalten Sie Abhängigkeiten und deren Schwachstellen (SBOM)?",info:"Software nutzt viele Fremdkomponenten. Eine SBOM listet sie auf, damit bekannte Lücken (CVEs) erkannt werden.",rec:"SBOM pflegen und Dependencies automatisiert auf CVEs scannen."},
+{id:"I.4",q:"Werden Secrets zentral und sicher verwaltet?",info:"„Secrets“ = Passwörter, API-Schlüssel. Sie gehören in einen sicheren Speicher (Vault), nicht in den Code.",rec:"Secrets-Management (Vault) statt Klartext; regelmäßige Rotation."},
+{id:"I.5",q:"Sind Kundendaten mandantengetrennt (Tenant Isolation)?",info:"Bei mehreren Kunden auf einem System muss sicher sein, dass kein Kunde die Daten eines anderen sieht.",rec:"Strikte Mandantentrennung sicherstellen."},
+{id:"I.6",q:"Führen Sie regelmäßige Pentests / Security-Reviews durch?",info:"Ein Penetrationstest ist ein beauftragter, kontrollierter Angriff, um Schwachstellen vor echten Angreifern zu finden.",rec:"Mindestens jährlich extern testen lassen und Findings nachverfolgen."}]},
+generic:{id:"mgen",n:"09",short:"Lieferkette",t:"Lieferkette & Dienstleister-Governance",bsig:"§ 30 Abs. 2 Nr. 4 BSIG",q:[
+{id:"G.1",q:"Werden Lieferanten nach Sicherheitskriterien bewertet?",info:"Prüfen Sie, wie sicher Ihre Dienstleister arbeiten – vor und während der Zusammenarbeit.",rec:"Kritische Dienstleister vor Beauftragung und regelmäßig prüfen."},
+{id:"G.2",q:"Sind Sicherheitsanforderungen vertraglich geregelt?",info:"Sicherheits- und Meldepflichten sollten im Vertrag stehen (Grundlage der NIS2-Lieferkettenpflicht).",rec:"Sicherheits- und Meldepflichten in Verträge aufnehmen."},
+{id:"G.3",q:"Liegen Auftragsverarbeitungsverträge (AVV) vor?",info:"Ein AVV ist ein von der DSGVO geforderter Vertrag mit jedem Dienstleister, der personenbezogene Daten verarbeitet.",rec:"Für Dienstleister mit Datenzugriff DSGVO-konforme AVV abschließen."},
+{id:"G.4",q:"Sind kritische Abhängigkeiten von einzelnen Anbietern bekannt?",info:"Ein Klumpenrisiko entsteht, wenn ein einzelner Ausfall Ihren Betrieb lahmlegt. Solche Abhängigkeiten sollten Sie kennen.",rec:"Klumpenrisiken und Single-Points-of-Failure identifizieren."},
+{id:"G.5",q:"Werden ausgelagerte/Cloud-Dienste laufend überwacht?",info:"Auch ausgelagerte Dienste sollten regelmäßig auf Sicherheitsniveau und Zertifizierungen geprüft werden.",rec:"Sicherheitsniveau und Zertifizierungen regelmäßig prüfen."},
+{id:"G.6",q:"Sind Dienstleister zur Meldung von Vorfällen verpflichtet?",info:"Passiert bei einem Dienstleister etwas, müssen Sie es rechtzeitig erfahren, um eigene (NIS2-)Fristen zu halten.",rec:"Vertragliche Vorfall-Meldepflichten mit Fristen vereinbaren."}]}
+};
+function moduleFor(b){return MODULES[b]||MODULES.generic;}
+function sectionsA(){return BASE.concat([moduleFor(document.getElementById('branche').value)]);}
+
+var ANS={}; // qid -> value
+
+function esc(x){return(x||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+function renderQuestions(){
+  var secs=sectionsA(),html='';
+  secs.forEach(function(s){
+    html+='<div class="rc-step"><div class="rc-step-title">'+s.n+' · '+s.t+'</div>';
+    s.q.forEach(function(q){
+      var info=q.info?'<span class="rc-info" tabindex="0">i<span class="rc-tip">'+esc(q.info)+'</span></span>':'';
+      html+='<div class="rc-q"><div class="rc-q-text"><span class="rc-q-num">'+q.id+'</span><span>'+q.q+'</span>'+info+'</div><div class="rc-opts">';
+      OPTS.forEach(function(o){
+        var on=ANS[q.id]===o.v;
+        html+='<div class="rc-opt'+(on?' on':'')+'" data-qid="'+q.id+'" data-val="'+o.v+'"><span class="rc-opt-dot"></span>'+o.t+'</div>';
+      });
+      html+='</div></div>';
+    });
+    html+='</div>';
+  });
+  document.getElementById('questions').innerHTML=html;
+}
+
+/* Einfachauswahl je Frage — ohne Full-Re-Render (kein Fokusverlust) */
+document.getElementById('questions').addEventListener('click',function(e){
+  var el=e.target.closest('.rc-opt');if(!el)return;
+  var qid=el.dataset.qid,val=el.dataset.val;
+  ANS[qid]=val;
+  var group=el.parentNode.querySelectorAll('.rc-opt');
+  group.forEach(function(g){g.classList.toggle('on',g.dataset.val===val);});
+});
+document.getElementById('branche').addEventListener('change',renderQuestions);
+
+/* SVG-Radar im Markenton #5C3C47 */
+function radar(data){
+  var cx=150,cy=140,R=100,N=data.length,rings=4,out='';
+  function pt(i,r){var a=-Math.PI/2+i*2*Math.PI/N;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+  for(var g=1;g<=rings;g++){var rr=R*g/rings,p='';for(var i=0;i<N;i++){var c=pt(i,rr);p+=(i?'L':'M')+c[0].toFixed(1)+' '+c[1].toFixed(1)+' ';}out+='<path d="'+p+'Z" fill="none" stroke="#e0e0dc" stroke-width="1"/>';}
+  for(var i=0;i<N;i++){var e=pt(i,R);out+='<line x1="'+cx+'" y1="'+cy+'" x2="'+e[0].toFixed(1)+'" y2="'+e[1].toFixed(1)+'" stroke="#e0e0dc" stroke-width="1"/>';}
+  var dp='';for(var i=0;i<N;i++){var v=Math.max(data[i].score,3);var c=pt(i,R*v/100);dp+=(i?'L':'M')+c[0].toFixed(1)+' '+c[1].toFixed(1)+' ';}
+  out+='<path d="'+dp+'Z" fill="#5C3C47" fill-opacity="0.2" stroke="#5C3C47" stroke-width="2"/>';
+  for(var i=0;i<N;i++){var l=pt(i,R+15),a=-Math.PI/2+i*2*Math.PI/N,an=(l[0]<cx-5?'end':l[0]>cx+5?'start':'middle');out+='<text x="'+l[0].toFixed(1)+'" y="'+(l[1]+3).toFixed(1)+'" font-size="10" font-family="DM Sans" fill="#666" text-anchor="'+an+'">'+esc(data[i].short)+'</text>';}
+  return '<svg viewBox="0 0 300 280" width="300" height="280">'+out+'</svg>';
+}
+
+function calculate(){
+  var company=document.getElementById('company').value.trim()||'Ihr Unternehmen';
+  var brancheVal=document.getElementById('branche').value;
+  var brancheName=document.querySelector('#branche option:checked').textContent;
+  var secs=sectionsA();
+  function valOf(v){for(var i=0;i<OPTS.length;i++)if(OPTS[i].v===v)return OPTS[i].val;}
+  var ss=secs.map(function(s){
+    var rel=s.q.filter(function(q){return ANS[q.id]&&ANS[q.id]!=='na';});
+    var sc=rel.length?Math.round(rel.reduce(function(a,q){return a+valOf(ANS[q.id]);},0)/(rel.length*2)*100):null;
+    return{n:s.n,short:s.short,t:s.t,bsig:s.bsig,score:sc};
+  });
+  var scored=ss.filter(function(s){return s.score!==null;});
+  var overall=scored.length?Math.round(scored.reduce(function(a,s){return a+s.score;},0)/scored.length):0;
+  var gaps=[];secs.forEach(function(s){s.q.forEach(function(q){if(ANS[q.id]==='nein'||ANS[q.id]==='teilweise')gaps.push({q:q.q,rec:q.rec,bsig:s.bsig,secT:s.t,prio:ANS[q.id]==='nein'?'crit':'imp'});});});
+  gaps.sort(function(a,b){return(a.prio==='crit'?0:1)-(b.prio==='crit'?0:1);});
+  var krit=gaps.filter(function(g){return g.prio==='crit';}).length;
+  var strengths=ss.filter(function(s){return s.score!==null&&s.score>=75;});
+  var total=0,answered=0;secs.forEach(function(s){s.q.forEach(function(q){total++;if(ANS[q.id])answered++;});});
+
+  var lvlTxt=overall>=75?'Solide aufgestellt':overall>=45?'Handlungsbedarf':'Kritischer Handlungsbedarf';
+  var col=function(s){return s<40?'#E24B4A':s<70?'#F5A623':'#5C3C47';};
+  var dateStr=new Date().toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
+
+  // BSIG-Tags (distinct) aus Lücken
+  var bsigSet=[];gaps.forEach(function(g){if(g.bsig&&bsigSet.indexOf(g.bsig)<0)bsigSet.push(g.bsig);});
+
+  var html=''+
+  '<div class="rc-results-head"><div class="rc-results-title">Sicherheitsbewertung: '+esc(company)+'</div>'+
+  '<div class="rc-results-company">'+esc(brancheName)+' · '+dateStr+' · '+answered+'/'+total+' Fragen beantwortet</div></div>'+
+  '<div class="rc-results-body">'+
+  '<div style="background:#FFF9F0;border:0.5px solid #FAC775;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.25rem;font-size:13px;color:#633806;"><strong style="display:block;font-weight:500;color:#412402;margin-bottom:2px;">NIS2-Hinweis</strong>Viele der geprüften Bereiche überschneiden sich mit den Pflichten nach § 30 BSIG (NIS2). Offene Punkte können damit auch rechtlich relevant sein.</div>'+
+  '<div class="rc-total"><div class="rc-total-num" style="color:'+col(overall)+'">'+overall+'%</div><div class="rc-total-label">Sicherheits-Reifegrad<br>'+lvlTxt+'</div></div>'+
+  '<div class="rc-section"><div class="rc-section-title">Sicherheitsprofil</div><div class="rc-radar">'+radar(ss.map(function(s){return{short:s.short,score:s.score||0};}))+'</div></div>'+
+  '<div class="rc-section"><div class="rc-section-title">Reifegrad nach Bereich</div><div class="rc-items">'+
+  ss.map(function(s){var v=s.score===null?0:s.score;return '<div class="rc-item"><div class="rc-item-label">'+s.n+' · '+s.t+'</div><div class="rc-item-bar-wrap"><div class="rc-item-bar" style="width:'+v+'%;background:'+(s.score===null?'#ccc':col(s.score))+'"></div></div><div class="rc-item-val">'+(s.score===null?'k. A.':s.score+'%')+'</div></div>';}).join('')+'</div></div>'+
+  '<div class="rc-section"><div class="rc-score-bar"><div class="rc-score-label"><span>Gesamt-Schutzniveau</span><span style="font-weight:500;color:'+col(overall)+'">'+overall+'%</span></div><div class="rc-score-track"><div class="rc-score-fill" style="width:'+overall+'%;background:'+col(overall)+'"></div></div></div></div>'+
+  '<div class="rc-risk-row">'+
+  '<div class="rc-risk '+(overall>=75?'low':overall>=45?'med':'high')+'"><div class="rc-risk-label">Reifegrad</div><div class="rc-risk-val">'+overall+'%</div><div class="rc-risk-desc">'+lvlTxt+'</div></div>'+
+  '<div class="rc-risk '+(krit>0?'high':'low')+'"><div class="rc-risk-label">Kritische Lücken</div><div class="rc-risk-val">'+krit+'</div><div class="rc-risk-desc">vorrangig zu schließen</div></div>'+
+  '<div class="rc-risk '+(gaps.length>5?'med':'low')+'"><div class="rc-risk-label">Empfehlungen</div><div class="rc-risk-val">'+gaps.length+'</div><div class="rc-risk-desc">konkrete Maßnahmen</div></div>'+
+  '</div>';
+
+  if(strengths.length){html+='<div class="rc-section"><div class="rc-section-title">Ihre Stärken</div><div class="rc-strengths">'+strengths.map(function(s){return '<span class="rc-str-tag">✓ '+s.t+'</span>';}).join('')+'</div></div>';}
+
+  if(gaps.length){
+    html+='<div class="rc-section"><div class="rc-section-title">Handlungsempfehlungen</div><div class="rc-recs-grid">'+
+    gaps.map(function(g){var crit=g.prio==='crit';var cls=crit?'critical':'important';var lbl=crit?'🔴 Sofortmaßnahme':'🟡 Wichtig';
+      return '<div class="rc-rec-card '+cls+'"><div class="rc-rec-priority">'+lbl+'</div><div class="rc-rec-title">'+g.q+'</div><div class="rc-rec-desc">'+g.rec+'</div>'+(g.bsig?'<div class="rc-rec-tool">Bezug: '+g.bsig+'</div>':'')+'</div>';
+    }).join('')+'</div></div>';
+  }
+
+  if(bsigSet.length){html+='<div class="rc-section"><div class="rc-section-title">Betroffene NIS2-Pflichten (§ 30 BSIG)</div><div class="rc-compliance">'+bsigSet.map(function(b,i){return '<span class="rc-comp-tag '+(i<2?'comp-required':'comp-recommended')+'">'+(i<2?'⚠️ ':'')+b+'</span>';}).join('')+'</div></div>';}
+
+  html+='<div class="rc-cta"><div class="rc-cta-text">Wir schließen die kritischen Lücken gemeinsam mit Ihnen.<small>Kostenloses 30-Minuten-Erstgespräch — schreiben Sie uns an '+CONTACT.mail+'.</small></div>'+
+  '<a class="rc-cta-link" href="'+CONTACT.contact+'" target="_blank">Beratung anfragen →</a></div>'+
+  /* TODO(cybterra): Lead + Ergebnis ans CRM senden — z. B.
+     fetch('/api/assessment',{method:'POST',body:JSON.stringify({company:company,branche:brancheVal,answers:ANS,overall:overall})}); */
+  '</div>';
+
+  var r=document.getElementById('results');
+  r.innerHTML=html;r.classList.remove('hidden');
+  r.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+renderQuestions();
+</script>
+</body>
+</html>
